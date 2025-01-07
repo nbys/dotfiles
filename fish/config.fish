@@ -25,4 +25,4 @@ if not type -q nvm
     end
 end
 
-bind \cf 'find ~/Projects/ -maxdepth 3 -type d -not -path "*/.*" | fzf | read selected_dir; tmux-sessionizer $selected_dir'
+bind \cf 'find ~/Projects/ -maxdepth 3 -type d -not -path "*/.*" -not -path "*/__pycache__" - not -path "*/*.egg-info" | fzf | read selected_dir; tmux-sessionizer $selected_dir'
