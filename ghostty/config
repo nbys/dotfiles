@@ -1,0 +1,12 @@
+theme=rose-pine
+
+font-family                 = Iosevka Nerd Font Mono
+font-size                   = 15
+window-inherit-font-size    = true
+
+cursor-style                = block
+cursor-style-blink          = false
+shell-integration-features  = no-cursor
+
+macos-titlebar-style        = tabs
+
