@@ -25,4 +25,4 @@ if not type -q nvm
     end
 end
 
-bind \cf 'find ~/Projects/ -maxdepth 3 -type d -not -path "*/.git*" -not -path "*/.vscode*" -not -path "*/.venv" | fzf | read selected_dir; tmux-sessionizer $selected_dir'
+bind \cf 'find ~/Projects/ -maxdepth 3 -type d -not -path "*/.*" | fzf | read selected_dir; tmux-sessionizer $selected_dir'
