@@ -16,12 +16,12 @@
   },
   "vim_mode": true,
   "ui_font_size": 14,
-  "buffer_font_family": "IosevkaTerm Nerd Font Mono",
+  "buffer_font_family": "Iosevka Nerd Font Mono",
   "buffer_font_size": 14,
   "theme": {
     "mode": "system",
     "light": "Rosé Pine Moon",
     "dark": "Rosé Pine Moon"
   },
-  "ui_font_family": "IosevkaTerm Nerd Font Mono"
+  "ui_font_family": "Menlo"
 }

@@ -34,13 +34,6 @@ local config = function()
 		},
 	})
 
-	-- -- json
-	-- lspconfig.jsonls.setup({
-	-- 	capabilities = capabilities,
-	-- 	on_attach = on_attach,
-	-- 	filetypes = { "json", "jsonc" },
-	-- })
-	--
 	-- python
 	lspconfig.pyright.setup({
 		capabilities = capabilities,
@@ -143,84 +136,38 @@ local config = function()
 		},
 		root_dir = lspconfig.util.root_pattern("package.json", "tsconfig.json", ".git"),
 	})
+
 	-- SAP CDS
 	lspconfig.cds_lsp.setup({
-		cmd = { "cds-lsp", "--stdio" },
-		filetypes = { "cds" }, -- Add other filetypes if needed
-		root_dir = lspconfig.util.root_pattern(".cdsrc.json", "package.json", ".git", "db", "srv"),
-		settings = {
-			cds = {
-				lint = {
-					strict = true, -- Enable strict linting if desired
-				},
-			},
-		},
+		on_attach = on_attach,
+		capabilities = capabilities,
+	})
+
+	-- docker
+	lspconfig.dockerls.setup({
+		capabilities = capabilities,
 		on_attach = on_attach,
 	})
-	-- -- bash
-	-- lspconfig.bashls.setup({
-	-- 	capabilities = capabilities,
-	-- 	on_attach = on_attach,
-	-- 	filetypes = { "sh", "aliasrc" },
-	-- })
 	--
-	-- -- solidity
-	-- lspconfig.solidity.setup({
-	-- 	capabilities = capabilities,
-	-- 	on_attach = on_attach,
-	-- 	filetypes = { "solidity" },
-	-- })
-	--
-	-- -- typescriptreact, javascriptreact, css, sass, scss, less, svelte, vue
-	-- lspconfig.emmet_ls.setup({
-	-- 	capabilities = capabilities,
-	-- 	on_attach = on_attach,
-	-- 	filetypes = {
-	-- 		"typescriptreact",
-	-- 		"javascriptreact",
-	-- 		"javascript",
-	-- 		"css",
-	-- 		"sass",
-	-- 		"scss",
-	-- 		"less",
-	-- 		"svelte",
-	-- 		"vue",
-	-- 		"html",
-	-- 	},
-	-- })
-	--
-	-- -- docker
-	-- lspconfig.dockerls.setup({
-	-- 	capabilities = capabilities,
-	-- 	on_attach = on_attach,
-	-- })
-	--
-	-- -- C/C++
-	-- lspconfig.clangd.setup({
-	-- 	capabilities = capabilities,
-	-- 	on_attach = on_attach,
-	-- 	cmd = {
-	-- 		"clangd",
-	-- 		"--offset-encoding=utf-16",
-	-- 	},
-	-- })
+	-- C/C++
+	lspconfig.clangd.setup({
+		capabilities = capabilities,
+		on_attach = on_attach,
+		cmd = {
+			"clangd",
+			"--offset-encoding=utf-16",
+		},
+	})
 	--
 	local luacheck = require("efmls-configs.linters.luacheck")
 	local stylua = require("efmls-configs.formatters.stylua")
 	local gofmt = require("efmls-configs.formatters.gofmt")
 	local goimports = require("efmls-configs.formatters.goimports")
-	--local golangci_lint = require("efmls-configs.linters.golangci_lint")
-	-- local flake8 = require("efmls-configs.linters.flake8")
-	-- local black = require("efmls-configs.formatters.black")
+	-- local golangci_lint = require("efmls-configs.linters.golangci_lint")
 	local eslint = require("efmls-configs.linters.eslint")
 	local prettier_d = require("efmls-configs.formatters.prettier_d")
-	-- local fixjson = require("efmls-configs.formatters.fixjson")
-	-- local shellcheck = require("efmls-configs.linters.shellcheck")
-	-- local shfmt = require("efmls-configs.formatters.shfmt")
-	-- local hadolint = require("efmls-configs.linters.hadolint")
-	-- local solhint = require("efmls-configs.linters.solhint")
-	-- local cpplint = require("efmls-configs.linters.cpplint")
-	-- local clangformat = require("efmls-configs.formatters.clang_format")
+	local cpplint = require("efmls-configs.linters.cpplint")
+	local clangformat = require("efmls-configs.formatters.clang_format")
 
 	local ruff_linter = require("efmls-configs.linters.ruff")
 	local ruff_formatter = require("efmls-configs.formatters.ruff")
@@ -231,22 +178,12 @@ local config = function()
 			"python",
 			"go",
 			"rust",
-			-- "json",
-			-- "jsonc",
-			-- "sh",
-			-- "javascript",
-			-- "javascriptreact",
-			-- "typescript",
-			-- "typescriptreact",
-			-- "svelte",
-			-- "vue",
-			-- "markdown",
-			-- "docker",
-			-- "solidity",
-			-- "html",
-			-- "css",
-			-- "c",
-			-- "cpp",
+			"javascript",
+			"typescript",
+			"vue",
+			"docker",
+			"c",
+			"cpp",
 		},
 		init_options = {
 			documentFormatting = true,
@@ -261,22 +198,13 @@ local config = function()
 				lua = { luacheck, stylua },
 				python = { ruff_linter, ruff_formatter },
 				go = { gofmt, goimports },
-				-- typescript = { eslint, prettier_d },
-				--json = { eslint, fixjson },
-				--jsonc = { eslint, fixjson },
-				--sh = { shellcheck, shfmt },
-				--javascript = { eslint, prettier_d },
-				--javascriptreact = { eslint, prettier_d },
+				typescript = { eslint, prettier_d },
+				javascript = { eslint, prettier_d },
 				typescriptreact = { eslint, prettier_d },
-				--svelte = { eslint, prettier_d },
-				--vue = { eslint, prettier_d },
-				--markdown = { prettier_d },
-				--docker = { hadolint, prettier_d },
-				--solidity = { solhint },
-				--html = { prettier_d },
-				--css = { prettier_d },
-				--c = { clangformat, cpplint },
-				--cpp = { clangformat, cpplint },
+				vue = { eslint, prettier_d },
+				docker = { prettier_d },
+				c = { clangformat, cpplint },
+				cpp = { clangformat, cpplint },
 			},
 		},
 	})
