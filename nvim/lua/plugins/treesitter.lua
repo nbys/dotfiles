@@ -1,3 +1,12 @@
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.cds = {
+    install_info = {
+        url = "https://github.com/cap-js-community/tree-sitter-cds.git",
+        branch = "main",
+        files = { "src/parser.c", "src/scanner.c" },
+    },
+    filetype = "cds",
+}
 local config = function()
 	require("nvim-treesitter.configs").setup({
 		build = ":TSUpdate",
@@ -30,6 +39,7 @@ local config = function()
 			"vue",
 			"svelte",
 			"toml",
+            "cds",
 		},
 		auto_install = true,
 		highlight = {
