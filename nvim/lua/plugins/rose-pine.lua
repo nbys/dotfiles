@@ -53,6 +53,7 @@ return {
 		},
 
 		highlight_groups = {
+            Delimiter = { fg = "iris" },
 			Visual = { bg = "#29514d" },
 			-- PmenuMatchSel = { bg = "#397973" },
 			-- Comment = { fg = "foam" },
