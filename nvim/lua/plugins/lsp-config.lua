@@ -165,7 +165,7 @@ local config = function()
 	local goimports = require("efmls-configs.formatters.goimports")
 	-- local golangci_lint = require("efmls-configs.linters.golangci_lint")
 	local eslint = require("efmls-configs.linters.eslint")
-	local prettier_d = require("efmls-configs.formatters.prettier_d")
+	local prettier = require("efmls-configs.formatters.prettier")
 	local cpplint = require("efmls-configs.linters.cpplint")
 	local clangformat = require("efmls-configs.formatters.clang_format")
 
@@ -198,11 +198,11 @@ local config = function()
 				lua = { luacheck, stylua },
 				python = { ruff_linter, ruff_formatter },
 				go = { gofmt, goimports },
-				typescript = { eslint, prettier_d },
-				javascript = { eslint, prettier_d },
-				typescriptreact = { eslint, prettier_d },
-				vue = { eslint, prettier_d },
-				docker = { prettier_d },
+				typescript = { eslint, prettier },
+				javascript = { eslint, prettier },
+				typescriptreact = { eslint, prettier },
+				vue = { eslint, prettier },
+				docker = { prettier },
 				c = { clangformat, cpplint },
 				cpp = { clangformat, cpplint },
 			},
