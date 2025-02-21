@@ -77,9 +77,16 @@ vim.keymap.set("n", "<leader>dgt", "<cmd>lua require('dap-go').debug_test()<CR>"
 
 -- -- LSP
 vim.keymap.set("n", "<F2>", "<cmd>lua vim.lsp.buf.rename()<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "gr", "<cmd>lua vim.lsp.buf.rename()<CR>", { noremap = true, silent = true })
 vim.keymap.set(
 	"n",
 	"<F12>",
+	"<cmd>lua require('telescope.builtin').lsp_references()<CR>",
+	{ noremap = true, silent = true }
+)
+vim.keymap.set(
+	"n",
+	"gf",
 	"<cmd>lua require('telescope.builtin').lsp_references()<CR>",
 	{ noremap = true, silent = true }
 )
