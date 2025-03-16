@@ -158,6 +158,16 @@ local config = function()
 			"--offset-encoding=utf-16",
 		},
 	})
+
+	-- Erlang
+	lspconfig.erlangls.setup({
+		capabilities = capabilities,
+		on_attach = on_attach,
+		filetypes = { "erlang" },
+		-- root_dir = util.root_pattern("rebar.config", "erlang.mk", ".git"),
+		-- single_file_support = true,
+	})
+
 	--
 	local luacheck = require("efmls-configs.linters.luacheck")
 	local stylua = require("efmls-configs.formatters.stylua")
