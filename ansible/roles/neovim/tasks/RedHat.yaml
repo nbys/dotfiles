@@ -55,7 +55,7 @@
 
 - name: Download Neovim tarball
   get_url:
-    url: "https://github.com/neovim/neovim/releases/download/v{{ neovim_version }}/nvim-{{ neovim_arch }}.tar.gz"
+    url: "https://github.com/neovim/neovim/releases/download/v{{ neovim_version_aws_linux }}/nvim-{{ neovim_arch }}.tar.gz"
     dest: "/tmp/nvim-{{ neovim_arch }}.tar.gz"
   when: neovim_installed.rc != 0
 
