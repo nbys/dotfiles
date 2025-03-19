@@ -1,0 +1,13 @@
+FROM amazonlinux:latest
+
+# Install ansible
+
+RUN yum update -y && yum install -y ansible
+
+COPY . /ansible
+
+WORKDIR /ansible
+
+# Start container directly into bash
+CMD ["/bin/bash"]
+

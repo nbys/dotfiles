@@ -1,0 +1,49 @@
+---
+- name: Check if Docker is installed
+  command: docker --version
+  register: docker_installed
+  ignore_errors: yes
+  changed_when: false
+
+- name: Install dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+  when: docker_installed.rc != 0
+
+- name: Download and add Docker GPG key (Fixed)
+  shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  args:
+    executable: /bin/bash
+  when: docker_installed.rc != 0
+
+- name: Add Docker repository
+  shell: |
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+  args:
+    executable: /bin/bash
+  when: docker_installed.rc != 0
+
+- name: Update APT package list
+  apt:
+    update_cache: yes
+  register: apt_update_result
+  retries: 3
+  delay: 10
+  until: apt_update_result is succeeded
+  when: docker_installed.rc != 0
+
+- name: Install Docker
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+  when: docker_installed.rc != 0

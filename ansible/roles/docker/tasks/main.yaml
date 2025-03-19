@@ -1,0 +1,18 @@
+---
+- name: Install Docker
+  include_tasks: "roles/docker/tasks/{{ ansible_os_family }}.yaml"
+
+- name: Start and enable Docker service
+  systemd:
+    name: docker
+    state: started
+    enabled: yes
+  register: docker_service_status
+  ignore_errors: yes
+
+- name: Log Docker service failure (if any)
+  debug:
+    msg: "Warning: Docker service failed to start. Check logs manually."
+  when: docker_service_status.failed
+
+

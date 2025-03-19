@@ -1,0 +1,12 @@
+FROM ubuntu:jammy
+
+# Install ansible
+
+RUN apt-get update && apt-get install -y ansible
+
+COPY . /ansible
+
+WORKDIR /ansible
+
+# Start container directly into bash
+CMD ["/bin/bash"]

@@ -1,0 +1,5 @@
+---
+- name: Install Docker
+  vars:
+    neovim_version: "0.10.0"
+  include_tasks: "roles/neovim/tasks/{{ ansible_os_family }}.yaml"

@@ -1,0 +1,7 @@
+---
+- name: Install Docker, Git, and Redshift CLI (RG)
+  hosts: localhost
+  become: yes
+  roles:
+    # - docker
+    - neovim

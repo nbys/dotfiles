@@ -1,0 +1,28 @@
+---
+- name: Check if Docker is installed
+  command: docker --version
+  register: docker_installed
+  ignore_errors: yes
+  changed_when: false
+
+- name: Detect Amazon Linux version
+  shell: awk -F= '/VERSION_ID/ {gsub(/"/, "", $2); print $2}' /etc/os-release
+  register: amazon_linux_version
+  changed_when: false
+  when: docker_installed.rc != 0
+
+- name: Enable Docker in Amazon Linux Extras (Amazon Linux 2)
+  command: amazon-linux-extras enable docker
+  when: docker_installed.rc != 0 and amazon_linux_version.stdout == "2"
+
+- name: Install Docker using Amazon Linux Extras (Amazon Linux 2)
+  yum:
+    name: docker
+    state: present
+  when: docker_installed.rc != 0 and amazon_linux_version.stdout == "2"
+
+- name: Install Docker using DNF (Amazon Linux 2023)
+  dnf:
+    name: docker
+    state: present
+  when: docker_installed.rc != 0 and amazon_linux_version.stdout == "2023"
