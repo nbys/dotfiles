@@ -1,0 +1,5 @@
+---
+python_version: "3.11.8"
+target_user: "{{ lookup('env', 'SUDO_USER') | default(ansible_user_id) }}"
+pyenv_root: "/home/{{ target_user }}/.pyenv"
+venv_path: "/home/{{ target_user }}/.venvs"

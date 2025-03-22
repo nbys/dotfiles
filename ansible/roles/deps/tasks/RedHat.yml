@@ -1,0 +1,43 @@
+---
+- name: Update all packages
+  dnf:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+- name: Install Development Tools group
+  dnf:
+    name: "@Development Tools"
+    state: present
+
+- name: Remove curl-minimal to resolve conflict
+  ansible.builtin.dnf:
+    name: curl-minimal
+    state: absent
+  become: true
+
+- name: Install additional development dependencies
+  dnf:
+    name:
+      - gcc
+      - gcc-c++
+      - make
+      - cmake
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - zlib-devel
+      - wget
+      - curl
+      - git
+      - tar
+      - xz
+      - bzip2
+      - readline-devel
+      - sqlite
+      - sqlite-devel
+      - xz
+      - xz-devel
+      - findutils
+
+    state: present

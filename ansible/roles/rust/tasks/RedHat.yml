@@ -1,0 +1,16 @@
+---
+- name: Ensure curl is installed
+  package:
+    name: curl
+    state: present
+
+- name: Install rustup (Rust installer)
+  shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    executable: /bin/bash
+  environment:
+    CARGO_HOME: "{{ ansible_env.HOME }}/.cargo"
+    RUSTUP_HOME: "{{ ansible_env.HOME }}/.rustup"
+  become: false
+  become_user: "{{ target_user }}"

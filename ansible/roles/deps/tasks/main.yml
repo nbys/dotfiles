@@ -1,0 +1,4 @@
+---
+- name: Include OS-specific task file
+  include_tasks: "{{ ansible_os_family }}.yml"
+

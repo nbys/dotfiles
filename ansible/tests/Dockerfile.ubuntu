@@ -2,11 +2,21 @@ FROM ubuntu:jammy
 
 # Install ansible
 
-RUN apt-get update && apt-get install -y ansible
+RUN apt-get update && \
+    apt-get install -y ansible && \
+    apt-get install -y sudo
 
-COPY . /ansible
+RUN useradd -m -s /bin/bash myuser
+RUN echo 'myuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+ENV HOME=/home/myuser
 
-WORKDIR /ansible
+
+COPY . $HOME/.config
+COPY ansible $HOME/ansible
+RUN chown -R myuser:myuser $HOME/.config $HOME/ansible
+
+USER myuser
+WORKDIR $HOME/ansible
 
 # Start container directly into bash
 CMD ["/bin/bash"]

@@ -1,0 +1,17 @@
+---
+- name: Ensure gnupg is installed
+  apt:
+    name: gnupg
+    state: present
+    update_cache: yes
+
+- name: Add fish shell PPA
+  apt_repository:
+    repo: ppa:fish-shell/release-4
+    state: present
+    update_cache: yes
+
+- name: Install fish shell on Ubuntu
+  apt:
+    name: fish
+    state: present

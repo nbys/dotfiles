@@ -1,4 +1,5 @@
 # ~/.config/fish/functions/nvm.fish
+# very slow script need to be redone
 function nvm
   bass source ~/.nvm/nvm.sh --no-use ';' nvm $argv
 end

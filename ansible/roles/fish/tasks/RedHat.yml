@@ -1,0 +1,30 @@
+- name: Download fish shell source
+  get_url:
+    url: https://github.com/fish-shell/fish-shell/releases/download/{{ fish_version }}/fish-{{ fish_version }}.tar.xz
+    dest: /tmp/fish.tar.xz
+
+- name: Extract fish shell
+  unarchive:
+    src: /tmp/fish.tar.xz
+    dest: /tmp/
+    remote_src: yes
+
+# - name: Compile and install fish shell
+#   shell: |
+#     cd /tmp/fish-{{ fish_version }}
+#     ./configure
+#     make
+#     make install
+#   args:
+#     creates: /usr/local/bin/fish
+
+- name: Compile and install fish shell
+  shell: |
+    cd /tmp/fish-{{ fish_version }}
+    mkdir -p build
+    cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
+    make
+    sudo make install
+  args:
+    executable: /bin/bash

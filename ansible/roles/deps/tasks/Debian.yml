@@ -1,0 +1,29 @@
+---
+- name: Update all packages on Debian/Ubuntu
+  apt:
+    upgrade: dist
+    update_cache: yes
+
+- name: Install Development Tools and other dependencies on Debian/Ubuntu
+  apt:
+    name:
+      - build-essential
+      - gcc
+      - g++
+      - make
+      - cmake
+      - libssl-dev
+      - libbz2-dev
+      - libffi-dev
+      - zlib1g-dev
+      - wget
+      - curl
+      - git
+      - tar
+      - xz-utils
+      - libreadline-dev
+      - sqlite3
+      - libsqlite3-dev
+      - xz-utils
+      - findutils
+    state: present

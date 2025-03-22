@@ -1,0 +1,3 @@
+---
+- name: Include OS-specific fish installation
+  include_tasks: "{{ ansible_os_family }}.yml"

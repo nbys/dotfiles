@@ -1,13 +1,32 @@
 FROM amazonlinux:latest
 
-# Install ansible
+# Install required packages: sudo, ansible, and dependencies
+RUN dnf update -y && \
+    dnf install -y \
+        sudo \
+        python3 \
+        python3-pip \
+        git \
+        tar \
+        gzip \
+        which && \
+    pip3 install --no-cache-dir ansible
 
-RUN yum update -y && yum install -y ansible
+# Create the user
+RUN useradd -m -s /bin/bash myuser && \
+    echo 'myuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
-COPY . /ansible
+# Set home explicitly
+ENV HOME=/home/myuser
 
-WORKDIR /ansible
+# Copy files and fix ownership
+COPY . $HOME/.config
+COPY ansible $HOME/ansible
+RUN chown -R myuser:myuser $HOME/.config $HOME/ansible
 
-# Start container directly into bash
+# Switch to the new user
+USER myuser
+WORKDIR $HOME/ansible
+
+# Default command
 CMD ["/bin/bash"]
-

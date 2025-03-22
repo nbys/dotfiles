@@ -3,5 +3,10 @@
   hosts: localhost
   become: yes
   roles:
-    # - docker
+    - deps
+    - tools
+    - rust
+    - docker
+    - fish
+    - python
     - neovim

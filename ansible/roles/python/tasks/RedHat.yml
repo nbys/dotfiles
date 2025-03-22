@@ -1,0 +1,65 @@
+- name: Show where pyenv will be cloned
+  debug:
+    msg: "pyenv will be cloned to: {{ pyenv_root }}"
+
+- name: Clone pyenv
+  git:
+    repo: 'https://github.com/pyenv/pyenv.git'
+    dest: "{{ pyenv_root }}"
+    update: no
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Fix ownership of pyenv directory
+  file:
+    path: "{{ pyenv_root }}"
+    state: directory
+    recurse: yes
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+
+- name: Link pyenv.fish to fish functions
+  file:
+    src: "{{ pyenv_root }}/completions/pyenv.fish"
+    dest: "/home/{{ target_user }}/.config/fish/functions/pyenv.fish"
+    state: link
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    force: yes
+  become: true
+  become_user: "{{ target_user }}"
+
+
+- name: Install Python {{ python_version }} with pyenv
+  shell: |
+    export PYENV_ROOT="{{ pyenv_root }}"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init --path)"
+    pyenv install -s {{ python_version }}
+    pyenv global {{ python_version }}
+  args:
+    executable: /bin/bash
+  environment:
+    PYENV_ROOT: "{{ pyenv_root }}"
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Create venv for Poetry
+  shell: |
+    {{ pyenv_root }}/versions/{{ python_version }}/bin/python -m venv {{ venv_path }}/poetry
+    {{ venv_path }}/poetry/bin/pip install -U pip setuptools
+    {{ venv_path }}/poetry/bin/pip install poetry
+  args:
+    executable: /bin/bash
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Create venv for uv
+  shell: |
+    {{ pyenv_root }}/versions/{{ python_version }}/bin/python -m venv {{ venv_path }}/uv
+    {{ venv_path }}/uv/bin/pip install -U pip setuptools
+    {{ venv_path }}/uv/bin/pip install uv
+  args:
+    executable: /bin/bash
+  become: true
+  become_user: "{{ target_user }}"
