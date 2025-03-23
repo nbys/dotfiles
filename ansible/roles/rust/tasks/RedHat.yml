@@ -10,7 +10,15 @@
   args:
     executable: /bin/bash
   environment:
-    CARGO_HOME: "{{ ansible_env.HOME }}/.cargo"
-    RUSTUP_HOME: "{{ ansible_env.HOME }}/.rustup"
+    CARGO_HOME: "/home/{{ target_user }}/.cargo"
+    RUSTUP_HOME: "/home/{{ target_user }}/.rustup"
   become: false
   become_user: "{{ target_user }}"
+
+- name: Ensure correct ownership of .cargo directory
+  file:
+    path: "/home/{{ target_user }}/.cargo"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    recurse: yes
+  become: true

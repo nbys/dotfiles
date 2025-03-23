@@ -1,0 +1,3 @@
+
+---
+target_user: "{{ lookup('env', 'SUDO_USER') | default(ansible_user_id) }}"

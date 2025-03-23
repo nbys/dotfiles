@@ -4,8 +4,8 @@
   become: yes
   roles:
     - deps
-    - tools
     - rust
+    - tools
     - docker
     - fish
     - python

@@ -1,17 +1,24 @@
 ---
-- name: Ensure curl is installed (Debian)
-  apt:
+- name: Ensure curl is installed
+  package:
     name: curl
     state: present
-    update_cache: yes
 
-- name: Install rustup (Rust installer) on Debian
+- name: Install rustup (Rust installer)
   shell: |
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
   args:
     executable: /bin/bash
   environment:
-    CARGO_HOME: "{{ ansible_env.HOME }}/.cargo"
-    RUSTUP_HOME: "{{ ansible_env.HOME }}/.rustup"
+    CARGO_HOME: "/home/{{ target_user }}/.cargo"
+    RUSTUP_HOME: "/home/{{ target_user }}/.rustup"
   become: false
   become_user: "{{ target_user }}"
+
+- name: Ensure correct ownership of .cargo directory
+  file:
+    path: "/home/{{ target_user }}/.cargo"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    recurse: yes
+  become: true

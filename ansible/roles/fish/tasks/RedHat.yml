@@ -1,3 +1,4 @@
+---
 - name: Download fish shell source
   get_url:
     url: https://github.com/fish-shell/fish-shell/releases/download/{{ fish_version }}/fish-{{ fish_version }}.tar.xz
@@ -9,14 +10,19 @@
     dest: /tmp/
     remote_src: yes
 
-# - name: Compile and install fish shell
-#   shell: |
-#     cd /tmp/fish-{{ fish_version }}
-#     ./configure
-#     make
-#     make install
-#   args:
-#     creates: /usr/local/bin/fish
+- name: Ensure curl is installed
+  package:
+    name: curl
+    state: present
+
+- name: Install rustup (root)
+  shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    executable: /bin/bash
+  environment:
+    CARGO_HOME: "{{ ansible_env.HOME }}/.cargo"
+    RUSTUP_HOME: "{{ ansible_env.HOME }}/.rustup"
 
 - name: Compile and install fish shell
   shell: |

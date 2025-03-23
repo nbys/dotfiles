@@ -1,0 +1,58 @@
+# - name: Install core CLI tools using dnf (RedHat/Amazon Linux)
+#   dnf:
+#     name:
+#       - bat
+#       - tmux
+#     state: present
+#   become: true
+
+- name: Install ripgrep from source with cargo
+  git:
+    repo: https://github.com/BurntSushi/ripgrep.git
+    dest: /tmp/ripgrep
+    version: master
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Build and install ripgrep with cargo
+  shell: |
+    /home/{{ target_user }}/.cargo/bin/cargo install --path .
+  args:
+    chdir: /tmp/ripgrep
+    executable: /bin/bash
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Clone fzf from GitHub
+  git:
+    repo: https://github.com/junegunn/fzf.git
+    dest: "/home/{{ target_user }}/.fzf"
+    version: master
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Install fzf (run install script)
+  shell: |
+    ./install --bin
+  args:
+    chdir: "/home/{{ target_user }}/.fzf"
+    executable: /bin/bash
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Clone fd from GitHub
+  git:
+    repo: https://github.com/sharkdp/fd.git
+    dest: /tmp/fd
+    version: master
+  become: true
+  become_user: "{{ target_user }}"
+
+- name: Build and install fd using cargo
+  shell: |
+    /home/{{ target_user }}/.cargo/bin/cargo install --path .
+  args:
+    chdir: /tmp/fd
+    executable: /bin/bash
+  become: true
+  become_user: "{{ target_user }}"
