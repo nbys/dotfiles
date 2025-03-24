@@ -16,5 +16,5 @@ docker run --rm -it ansible-amazon:latest
 
 While in the container, run the following command to test the playbook:
 ```bash
-sudo ansible-playbook -i inventory.ini playbook.yaml
+ansible-playbook playbook.yaml -K
 ```

@@ -1,4 +1,25 @@
 ---
-- name: Include OS-specific fish installation
-  include_tasks: "{{ ansible_os_family }}.yml"
+- name: Download rustup installer script
+  get_url:
+    url: https://sh.rustup.rs
+    dest: "/home/{{ target_user.stdout }}/rustup-init.sh"
+    mode: '0755'
 
+- name: Run rustup installer script
+  shell: |
+    ./rustup-init.sh -y
+    source "/home/{{ target_user.stdout }}/.cargo/env"
+    rustup default stable
+  args:
+    chdir: "/home/{{ target_user.stdout }}"
+    executable: /bin/bash
+  environment:
+    HOME: "/home/{{ target_user.stdout }}"
+    USER: "{{ target_user.stdout }}"
+    CARGO_HOME: "/home/{{ target_user.stdout }}/.cargo"
+    RUSTUP_HOME: "/home/{{ target_user.stdout }}/.rustup"
+
+- name: Remove rustup-init script after install
+  file:
+    path: "/home/{{ target_user.stdout }}/rustup-init.sh"
+    state: absent

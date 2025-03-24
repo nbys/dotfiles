@@ -1,0 +1,9 @@
+- name: get the username running the deploy
+  become: false
+  local_action: command whoami
+  register: target_user
+
+- name: check if variable if defined
+  debug:
+    msg: "target_user is defined"
+  when: target_user is defined

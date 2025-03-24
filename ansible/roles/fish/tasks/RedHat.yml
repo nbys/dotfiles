@@ -10,20 +10,6 @@
     dest: /tmp/
     remote_src: yes
 
-- name: Ensure curl is installed
-  package:
-    name: curl
-    state: present
-
-- name: Install rustup (root)
-  shell: |
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-  args:
-    executable: /bin/bash
-  environment:
-    CARGO_HOME: "{{ ansible_env.HOME }}/.cargo"
-    RUSTUP_HOME: "{{ ansible_env.HOME }}/.rustup"
-
 - name: Compile and install fish shell
   shell: |
     cd /tmp/fish-{{ fish_version }}
@@ -34,3 +20,8 @@
     sudo make install
   args:
     executable: /bin/bash
+  environment:
+    HOME: "/home/{{ target_user.stdout }}"
+    USER: "{{ target_user.stdout }}"
+    CARGO_HOME: "/home/{{ target_user.stdout }}/.cargo"
+    PATH: "/home/{{ target_user.stdout }}/.cargo/bin:{{ ansible_env.PATH }}"
