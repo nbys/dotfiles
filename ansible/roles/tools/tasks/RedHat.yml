@@ -1,4 +1,12 @@
 ---
+- name: Install from repository
+  dnf:
+    name:
+      - tmux
+      - tree
+    state: present
+    update_cache: yes
+
 - name: Install ripgrep from source with cargo
   git:
     repo: https://github.com/BurntSushi/ripgrep.git

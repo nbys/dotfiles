@@ -16,11 +16,3 @@
     state: present
   when: neovim_installed.rc != 0
 
-- name: Verify Neovim Installation
-  command: nvim --version
-  register: neovim_check
-  changed_when: false
-
-- name: Debug Neovim Installation Status
-  debug:
-    msg: "Neovim installed successfully: {{ neovim_check.stdout_lines }}"

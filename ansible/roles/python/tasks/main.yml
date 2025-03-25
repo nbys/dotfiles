@@ -21,6 +21,7 @@
     recurse: yes
     owner: "{{ target_user.stdout }}"
     group: "{{ target_user.stdout }}"
+    mode: '0755'
 
 - name: Install Python {{ python_version }} with pyenv
   shell: |
@@ -53,4 +54,13 @@
     /home/{{ target_user.stdout }}/.venvs/uv/bin/pip install uv
   # become: true
   # become_user: "{{ target_user.stdout }}"
+
+- name: Fix ownership of pyenv directory
+  file:
+    path: "/home/{{ target_user.stdout }}/.pyenv"
+    state: directory
+    recurse: yes
+    owner: "{{ target_user.stdout }}"
+    group: "{{ target_user.stdout }}"
+    mode: '0755'
 

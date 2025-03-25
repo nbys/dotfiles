@@ -15,6 +15,7 @@ if status is-interactive
         /opt/homebrew/opt \
         $HOME/.venvs/poetry/bin \
         $HOME/.venvs/uv/bin \
+        /usr/local/bin \
         $fish_user_paths
 end
 

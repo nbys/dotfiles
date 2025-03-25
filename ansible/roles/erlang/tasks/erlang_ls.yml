@@ -1,0 +1,40 @@
+---
+- name: Ensure build dependencies for Erlang LS are present (RedHat/Amazon Linux)
+  package:
+    name:
+      - git
+      - make
+      - gcc
+      - unzip
+    state: present
+  become: true
+
+- name: Clone Erlang LS repository
+  git:
+    repo: https://github.com/erlang-ls/erlang_ls.git
+    dest: /tmp/erlang_ls
+    version: main
+  # become: false
+
+- name: Build Erlang LS using make
+  shell: make
+  args:
+    chdir: /tmp/erlang_ls
+    executable: /bin/bash
+  # become: false
+
+- name: Install Erlang LS binary to /usr/local/bin
+  copy:
+    src: /tmp/erlang_ls/_build/default/bin/erlang_ls
+    dest: /usr/local/bin/erlang_ls
+    mode: '0755'
+    remote_src: true
+  # become: true
+
+# - name: Ensure /usr/local/bin is in PATH for all users
+#   lineinfile:
+#     path: /etc/profile.d/custom_path.sh
+#     line: 'export PATH="/usr/local/bin:$PATH"'
+#     create: yes
+#     mode: '0755'
+#   # become: true

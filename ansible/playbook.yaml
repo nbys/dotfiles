@@ -5,9 +5,12 @@
   roles:
     - setup
     - deps
+    - node
     - rust
     - tools
     - docker
     - fish
     - python
     - neovim
+    - go
+    - erlang

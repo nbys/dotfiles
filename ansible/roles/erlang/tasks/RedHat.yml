@@ -1,0 +1,38 @@
+---
+- name: Install build dependencies for Erlang
+  dnf:
+    name:
+      - gcc
+      - make
+      - ncurses-devel
+      - openssl-devel
+      - glibc-devel
+      - tar
+      - m4
+      - perl
+    state: present
+
+- name: Download rebar3 binary
+  get_url:
+    url: https://s3.amazonaws.com/rebar3/rebar3
+    dest: /usr/local/bin/rebar3
+    mode: '0755'
+
+- name: Download Erlang source
+  get_url:
+    url: https://github.com/erlang/otp/releases/download/OTP-{{ erlang_version }}/otp_src_{{ erlang_version }}.tar.gz
+    dest: /tmp/otp_src.tar.gz
+
+- name: Extract Erlang source
+  unarchive:
+    src: /tmp/otp_src.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Build and install Erlang
+  shell: |
+    cd /tmp/otp_src_{{ erlang_version }} &&
+    ./configure && make -j$(nproc) && make install
+  args:
+    executable: /bin/bash
+  # become: true

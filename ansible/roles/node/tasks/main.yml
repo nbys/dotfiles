@@ -1,0 +1,25 @@
+- name: Add NodeSource Node.js {{ nodejs_version }}.x repository (Debian)
+  shell: |
+    curl -fsSL https://deb.nodesource.com/setup_{{ nodejs_version }}.x | bash -
+  args:
+    executable: /bin/bash
+  when: ansible_os_family == 'Debian'
+
+- name: Add NodeSource Node.js {{ nodejs_version }}.x repository (Amazon Linux)
+  shell: |
+    curl -fsSL https://rpm.nodesource.com/setup_{{ nodejs_version }}.x | bash -
+  args:
+    executable: /bin/bash
+  when: ansible_os_family == 'RedHat'
+
+- name: Install Node.js
+  package:
+    name: nodejs
+    state: present
+
+- name: Install global npm packages using shell
+  shell: |
+    npm install -g tree-sitter-cli typescript
+  args:
+    executable: /bin/bash
+  become: true  # Needed for global installation to /usr/lib

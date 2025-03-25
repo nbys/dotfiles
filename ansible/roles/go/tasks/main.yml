@@ -1,0 +1,45 @@
+---
+- name: Detect architecture (uname -m)
+  ansible.builtin.command: uname -m
+  register: arch_raw
+  changed_when: false
+
+- name: Map architecture to Go's format
+  set_fact:
+    go_arch: >-
+      {{ 'amd64' if arch_raw.stdout == 'x86_64' else
+         'arm64' if arch_raw.stdout in ['aarch64', 'arm64'] else
+         'unsupported' }}
+
+- name: Fail if unsupported architecture
+  fail:
+    msg: "Unsupported architecture: {{ arch_raw.stdout }}"
+  when: go_arch == 'unsupported'
+
+- name: Set Go download URL
+  set_fact:
+    go_filename: "go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    go_url: "https://go.dev/dl/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+
+- name: Download Go archive
+  get_url:
+    url: "{{ go_url }}"
+    dest: "/tmp/{{ go_filename }}"
+    mode: '0644'
+  # become: true
+
+- name: Ensure Go install directory exists
+  file:
+    path: "/home/{{ target_user.stdout }}/go"
+    state: directory
+    owner: "{{ target_user.stdout }}"
+    group: "{{ target_user.stdout }}"
+    mode: '0755'
+  # become: true
+
+- name: Extract Go archive to /home/{{ target_user.stdout }}/go
+  unarchive:
+    src: "/tmp/{{ go_filename }}"
+    dest: /home/{{ target_user.stdout }}/go
+    remote_src: yes
+  # become: true
