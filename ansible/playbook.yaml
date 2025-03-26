@@ -13,4 +13,7 @@
     - python
     - neovim
     - go
-    - erlang
+
+
+    # Erlang installation failing, need to fix
+    # - erlang
