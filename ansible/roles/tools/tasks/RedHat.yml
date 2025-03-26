@@ -38,6 +38,13 @@
     chdir: "/home/{{ target_user.stdout }}/.fzf"
     executable: /bin/bash
 
+- name: Link fzf binary to /usr/local/bin
+  file:
+    src: "/home/{{ target_user.stdout }}/.fzf/bin/fzf"
+    dest: "/usr/local/bin/fzf"
+    state: link
+    force: true
+
 - name: Clone fd from GitHub
   git:
     repo: https://github.com/sharkdp/fd.git
