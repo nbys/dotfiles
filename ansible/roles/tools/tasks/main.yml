@@ -7,3 +7,5 @@
     repo: https://github.com/tmux-plugins/tpm
     dest: "/home/{{ target_user.stdout }}/.tmux/plugins/tpm"
     update: yes
+  become: yes
+  become_user: "{{ target_user.stdout }}"

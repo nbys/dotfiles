@@ -11,8 +11,8 @@
     repo: 'https://github.com/pyenv/pyenv.git'
     dest: "/home/{{ target_user.stdout }}/.pyenv"
     update: no
-  # become: true
-  # become_user: "{{ target_user.stdout }}"
+  become: true
+  become_user: "{{ target_user.stdout }}"
 
 - name: Fix ownership of pyenv directory
   file:
@@ -34,8 +34,8 @@
     executable: /bin/bash
   environment:
     PYENV_ROOT: "/home/{{ target_user.stdout }}/.pyenv"
-  # become: true
-  # become_user: "{{ target_user.stdout }}"
+  become: true
+  become_user: "{{ target_user.stdout }}"
 
 - name: Create venv for Poetry
   shell: |
@@ -44,16 +44,16 @@
     /home/{{ target_user.stdout }}/.venvs/poetry/bin/pip install poetry
   args:
     executable: /bin/bash
-  # become: true
-  # become_user: "{{ target_user.stdout }}"
+  become: true
+  become_user: "{{ target_user.stdout }}"
 
 - name: Install uv using pip from pyenv
   shell: |
     /home/{{ target_user.stdout }}/.pyenv/versions/{{ python_version }}/bin/python -m venv /home/{{ target_user.stdout }}/.venvs/uv
     /home/{{ target_user.stdout }}/.venvs/uv/bin/pip install -U pip setuptools
     /home/{{ target_user.stdout }}/.venvs/uv/bin/pip install uv
-  # become: true
-  # become_user: "{{ target_user.stdout }}"
+  become: true
+  become_user: "{{ target_user.stdout }}"
 
 - name: Fix ownership of pyenv directory
   file:
