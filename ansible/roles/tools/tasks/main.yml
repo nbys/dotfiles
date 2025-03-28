@@ -2,3 +2,8 @@
 - name: Include OS-specific fish installation
   include_tasks: "{{ ansible_os_family }}.yml"
 
+- name: Clone tmux plugin manager
+  git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ target_user.stdout }}/.tmux/plugins/tpm"
+    update: yes
