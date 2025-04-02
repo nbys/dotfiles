@@ -1,0 +1,20 @@
+- name: Ensure 'locales' package is installed (Debian)
+  apt:
+    name: locales
+    state: present
+  become: true
+
+- name: Ensure en_US.UTF-8 locale is generated (Debian)
+  locale_gen:
+    name: en_US.UTF-8
+    state: present
+  become: true
+  when: not locale_is_set
+
+- name: Set system-wide locale to en_US.UTF-8 (Debian)
+  lineinfile:
+    dest: /etc/default/locale
+    line: 'LANG=en_US.UTF-8'
+    create: yes
+  become: true
+  when: not locale_is_set

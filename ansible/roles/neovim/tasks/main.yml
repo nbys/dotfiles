@@ -1,5 +1,6 @@
 ---
-- name: Install Docker
+- name: Install Neovim
   vars:
     neovim_version_aws_linux: "0.10.0"
   include_tasks: "roles/neovim/tasks/{{ ansible_os_family }}.yml"
+

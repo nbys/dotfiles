@@ -37,9 +37,21 @@
     mode: '0755'
   # become: true
 
-- name: Extract Go archive to /home/{{ target_user.stdout }}/go
+- name: Extract Go archive to temporary location
   unarchive:
     src: "/tmp/{{ go_filename }}"
-    dest: /home/{{ target_user.stdout }}/go
+    dest: "/tmp/"
     remote_src: yes
-  # become: true
+
+- name: Move and flatten extracted Go directory
+  command: mv /tmp/go /home/{{ target_user.stdout }}/go
+  args:
+    creates: "/home/{{ target_user.stdout }}/go/bin/go"
+
+- name: Create symlink to Go binary in /usr/local/bin
+  file:
+    src: "/home/{{ target_user.stdout }}/go/go/bin/go"
+    dest: "/usr/local/bin/go"
+    state: link
+    force: true
+  become: true

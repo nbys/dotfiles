@@ -19,7 +19,7 @@
 
 - name: Install global npm packages using shell
   shell: |
-    npm install -g tree-sitter-cli typescript
+    npm install -g tree-sitter-cli typescript dockerfile-language-server-nodejs
   args:
     executable: /bin/bash
   become: true  # Needed for global installation to /usr/lib

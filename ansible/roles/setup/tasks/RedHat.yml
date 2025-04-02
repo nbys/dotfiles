@@ -1,0 +1,14 @@
+- name: Install glibc-langpack-en (RedHat)
+  yum:
+    name: glibc-langpack-en
+    state: present
+  become: true
+  when: not locale_is_set
+
+- name: Ensure /etc/locale.conf contains en_US.UTF-8
+  lineinfile:
+    path: /etc/locale.conf
+    line: "LANG=en_US.UTF-8"
+    create: yes
+  become: true
+  when: not locale_is_set

@@ -7,3 +7,16 @@
   debug:
     msg: "target_user is defined"
   when: target_user is defined
+
+- name: Check current system locale
+  command: locale | grep ^LANG=
+  register: current_locale
+  changed_when: false
+  failed_when: false
+
+- name: Set fact for whether locale is already set to en_US.UTF-8
+  set_fact:
+    locale_is_set: "{{ 'LANG=en_US.UTF-8' in current_locale.stdout }}"
+
+- name: Include OS-specific fish installation
+  include_tasks: "{{ ansible_os_family }}.yml"

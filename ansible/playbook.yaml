@@ -11,8 +11,8 @@
     - docker
     - fish
     - python
-    - neovim
     - go
+    - neovim
 
 
     # Erlang installation failing, need to fix
