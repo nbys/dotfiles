@@ -13,6 +13,7 @@
     - python
     - go
     - neovim
+    - terraform
 
 
     # Erlang installation failing, need to fix
