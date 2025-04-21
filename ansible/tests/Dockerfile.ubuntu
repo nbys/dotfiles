@@ -10,6 +10,9 @@ RUN useradd -m -s /bin/bash myuser
 RUN echo 'myuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 ENV HOME=/home/myuser
 
+# Bust cache
+ARG CACHEBUST=1
+RUN echo "Cache breaker: $CACHEBUST"
 
 COPY . $HOME/.config
 COPY ansible $HOME/ansible

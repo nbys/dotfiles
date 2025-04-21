@@ -26,4 +26,9 @@
       - libsqlite3-dev
       - xz-utils
       - findutils
+      - openssl
+      # - coreutils
+      # - ca-certificates
+      # - gnupg
+      # - lsb-release
     state: present

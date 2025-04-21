@@ -19,6 +19,10 @@ RUN useradd -m -s /bin/bash myuser && \
 # Set home explicitly
 ENV HOME=/home/myuser
 
+# Bust cache
+ARG CACHEBUST=1
+RUN echo "Cache breaker: $CACHEBUST"
+
 # Copy files and fix ownership
 COPY . $HOME/.config
 COPY ansible $HOME/ansible

@@ -39,5 +39,6 @@
       - xz
       - xz-devel
       - findutils
+      - openssl
 
     state: present
