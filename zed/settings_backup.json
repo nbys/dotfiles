@@ -10,15 +10,12 @@
   "auto_update_extensions": {
     "rose-pine-theme": false
   },
-  "agent": {
+  "assistant": {
     "default_model": {
       "provider": "copilot_chat",
       "model": "gpt-4o"
     },
     "version": "2"
-  },
-  "features": {
-    "edit_prediction_provider": "copilot"
   },
   "vim_mode": true,
   "ui_font_size": 14,
@@ -29,20 +26,5 @@
     "light": "Rosé Pine Moon",
     "dark": "Rosé Pine Moon"
   },
-  "ui_font_family": "Menlo",
-  "show_copilot_suggestions": true,
-
-  "languages": {
-    "Python": {
-      "language_servers": ["ruff"],
-      "format_on_save": "on",
-      "formatter": [
-        {
-          "language_server": {
-            "name": "ruff"
-          }
-        }
-      ]
-    }
-  }
+  "ui_font_family": "Menlo"
 }

@@ -15,7 +15,22 @@
   {
     "context": "Editor",
     "bindings": {
-      // "j k": ["workspace::SendKeystrokes", "escape"]
+      "f4": "debugger::Start",
+      "f6": "debugger::StepOver",
+      "f5": "debugger::StepInto",
+      "f8": "debugger::Continue",
+      "f7": "debugger::StepOut"
+    }
+  },
+  {
+    "context": "DebugPanel",
+    "bindings": {
+      "f4": "debugger::Start",
+      "f6": "debugger::StepOver",
+      "f5": "debugger::StepInto",
+      "f8": "debugger::Continue",
+      "f7": "debugger::StepOut"
+      // "f9": "debug::Stop"
     }
   }
 ]

@@ -9,6 +9,9 @@ cursor-style-blink          = false
 cursor-color		    = f2d5cf
 selection-background 	    = 626880
 shell-integration-features  = no-cursor
+# background		    = #2a1f3a
+background		    = #232136
+
 
 macos-titlebar-style        = tabs
 
