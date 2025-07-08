@@ -181,6 +181,8 @@ local config = function()
 
 	local ruff_linter = require("efmls-configs.linters.ruff")
 	local ruff_formatter = require("efmls-configs.formatters.ruff")
+    local mypy = require('efmls-configs.linters.mypy')
+
 	-- configure efm server
 	lspconfig.efm.setup({
 		filetypes = {
@@ -206,7 +208,7 @@ local config = function()
 		settings = {
 			languages = {
 				lua = { luacheck, stylua },
-				python = { ruff_linter, ruff_formatter },
+				python = { ruff_linter, ruff_formatter, mypy },
 				go = { gofmt, goimports },
 				typescript = { eslint, prettier },
 				javascript = { eslint, prettier },
