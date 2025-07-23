@@ -10,3 +10,39 @@ repositories:
   password: ""
   url: https://charts.bitnami.com/bitnami
   username: ""
+- caFile: ""
+  certFile: ""
+  insecure_skip_tls_verify: false
+  keyFile: ""
+  name: apache-airflow
+  pass_credentials_all: false
+  password: ""
+  url: https://airflow.apache.org
+  username: ""
+- caFile: ""
+  certFile: ""
+  insecure_skip_tls_verify: false
+  keyFile: ""
+  name: ingress-nginx
+  pass_credentials_all: false
+  password: ""
+  url: https://kubernetes.github.io/ingress-nginx
+  username: ""
+- caFile: ""
+  certFile: ""
+  insecure_skip_tls_verify: false
+  keyFile: ""
+  name: kuberay
+  pass_credentials_all: false
+  password: ""
+  url: https://ray-project.github.io/kuberay-helm/
+  username: ""
+- caFile: ""
+  certFile: ""
+  insecure_skip_tls_verify: false
+  keyFile: ""
+  name: nginx-stable
+  pass_credentials_all: false
+  password: ""
+  url: https://helm.nginx.com/stable
+  username: ""

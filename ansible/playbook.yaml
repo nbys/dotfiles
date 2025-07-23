@@ -3,18 +3,30 @@
   hosts: localhost
   become: yes
   roles:
-    - setup
-    - deps
-    - node
-    - rust
-    - tools
-    - docker
-    - fish
-    - python
-    - go
-    - neovim
-    - terraform
-    - k8s
+    - role: setup
+      tags: setup
+    - role: deps
+      tags: deps
+    - role: node
+      tags: node
+    - role: rust
+      tags: rust
+    - role: tools
+      tags: tools
+    - role: docker
+      tags: docker
+    - role: fish
+      tags: fish
+    - role: python
+      tags: python
+    - role: go
+      tags: go
+    - role: neovim
+      tags: neovim
+    - role: terraform
+      tags: terraform
+    - role: k8s
+      tags: k8s
 
 
     # Erlang installation failing, need to fix
