@@ -6,17 +6,38 @@ local config = function()
   require("neoconf").setup({})
   local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-  for type, icon in pairs(diagnostic_signs) do
-    local hl = "DiagnosticSign" .. type
-    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-  end
-
   -- helper for roots (new API)
   local function root_with(markers)
     return function(fname)
       return vim.fs.root(fname, markers)
     end
   end
+
+    local sev = vim.diagnostic.severity
+    local ds  = require("util.icons").diagnostic_signs -- e.g. { Error="", Warn="", Hint="", Info="" }
+
+    vim.diagnostic.config({
+      signs = {
+        -- set the text shown in the sign column per severity
+        text = {
+          [sev.ERROR] = ds.Error,
+          [sev.WARN]  = ds.Warn,
+          [sev.HINT]  = ds.Hint,
+          [sev.INFO]  = ds.Info,
+        },
+        -- optional:
+        -- numhl = {
+        --   [sev.ERROR] = "DiagnosticSignError",
+        --   [sev.WARN]  = "DiagnosticSignWarn",
+        --   [sev.HINT]  = "DiagnosticSignHint",
+        --   [sev.INFO]  = "DiagnosticSignInfo",
+        -- },
+      },
+      -- while you’re here, you can keep the rest consistent:
+      virtual_text = true,
+      underline = true,
+      update_in_insert = false,
+    })
 
   -- Lua
   vim.lsp.config("lua_ls", {
