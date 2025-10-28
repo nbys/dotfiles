@@ -30,15 +30,14 @@ M.on_attach = function(client, bufnr)
 end
 
 M.typescript_organise_imports = {
-	description = "Organise Imports",
-	function()
-		local params = {
-			command = "_typescript.organizeImports",
-			arguments = { vim.fn.expand("%:p") },
-		}
-		-- reorganise imports
-		vim.lsp.buf.execute_command(params)
-	end,
+  description = "Organise Imports",
+  function()
+    local params = {
+      command = "_typescript.organizeImports",
+      arguments = { vim.fn.expand("%:p") },
+    }
+    vim.lsp.commands.run(params)
+  end,
 }
 
 return M
