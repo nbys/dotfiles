@@ -122,9 +122,26 @@ local config = function()
 					end,
 				})
 			end
+            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 		end,
-		root_dir = root_with({ "Cargo.toml", ".git" }),
-		settings = { ["rust-analyzer"] = { cargo = { allFeatures = true } } },
+		settings = {
+			["rust-analyzer"] = {
+				imports = {
+					granularity = {
+						group = "module",
+					},
+					prefix = "self",
+				},
+				cargo = {
+					buildScripts = {
+						enable = true,
+					},
+				},
+				procMacro = {
+					enable = true,
+				},
+			},
+		},
 	})
 
 	-- TypeScript / JavaScript
