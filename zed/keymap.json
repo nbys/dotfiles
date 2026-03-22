@@ -15,22 +15,47 @@
   {
     "context": "Editor",
     "bindings": {
-      "f4": "debugger::Start",
-      "f6": "debugger::StepOver",
+      "f3": "pane::GoBack",
       "f5": "debugger::StepInto",
+      "f6": "debugger::StepOver",
+      "f7": "debugger::StepOut",
       "f8": "debugger::Continue",
-      "f7": "debugger::StepOut"
+      "ctrl-`": "terminal_panel::ToggleFocus"
     }
   },
   {
     "context": "DebugPanel",
     "bindings": {
-      "f4": "debugger::Start",
-      "f6": "debugger::StepOver",
+      "f3": "pane::GoBack",
       "f5": "debugger::StepInto",
+      "f6": "debugger::StepOver",
+      "f7": "debugger::StepOut",
       "f8": "debugger::Continue",
-      "f7": "debugger::StepOut"
-      // "f9": "debug::Stop"
+      "ctrl-`": "terminal_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-`": "terminal_panel::ToggleFocus"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space y": [
+        "workspace::SendKeystrokes",
+        "\"*y"
+      ]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == visual",
+    "bindings": {
+      "space y": [
+        "workspace::SendKeystrokes",
+        "\"*y"
+      ]
     }
   }
 ]

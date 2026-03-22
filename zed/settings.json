@@ -48,5 +48,58 @@
         }
       ]
     }
+  },
+
+  "base_keymap": "VSCode",
+
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+
+
+  "theme_overrides": {
+    "Rosé Pine": {
+      "syntax": {
+        "comment": {
+          "font_style": "normal"
+        },
+        "comment.doc": {
+          "font_style": "normal"
+        }
+      }
+    }
+  },
+
+  "buffer_font_features": {
+    "calt": true
+  },
+
+
+  "format_on_save": "on",
+  "autosave": "off",
+
+  "relative_line_numbers": "enabled",
+  "gutter": {
+    "line_numbers": true,
+    "runnables": true,
+    "breakpoints": true,
+    "folds": true
+  },
+
+  "minimap": {
+    "show": "never"
+  },
+
+  "scrollbar": {
+    "show": "auto"
+  },
+
+  "terminal": {
+    "shell": {
+      "program": "fish"
+    },
+    "font_family": "Iosevka Nerd Font Mono",
+    "blinking": "off"
   }
 }
