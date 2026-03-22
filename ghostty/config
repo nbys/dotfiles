@@ -1,7 +1,7 @@
 theme = Rose Pine Moon
 
 font-family                 = Iosevka Nerd Font Mono
-font-size                   = 15
+font-size                   = 14
 window-inherit-font-size    = true
 
 cursor-style                = block
@@ -12,7 +12,5 @@ shell-integration-features  = no-cursor
 # background		    = #2a1f3a
 background		    = #232136
 
-
 macos-titlebar-style        = tabs
-
 confirm-close-surface	    = false

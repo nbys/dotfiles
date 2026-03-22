@@ -1,27 +1,47 @@
 ---
 - name: Download fish shell source
   get_url:
-    url: https://github.com/fish-shell/fish-shell/releases/download/{{ fish_version }}/fish-{{ fish_version }}.tar.xz
+    url: "https://github.com/fish-shell/fish-shell/releases/download/{{ fish_version }}/fish-{{ fish_version }}.tar.xz"
     dest: /tmp/fish.tar.xz
 
 - name: Extract fish shell
   unarchive:
     src: /tmp/fish.tar.xz
     dest: /tmp/
-    remote_src: yes
+    remote_src: true
 
 - name: Compile and install fish shell
+  become: true
   shell: |
+    set -euo pipefail
+
+    export HOME="/home/{{ target_user.stdout }}"
+    export USER="{{ target_user.stdout }}"
+    export CARGO_HOME="$HOME/.cargo"
+    export RUSTUP_HOME="$HOME/.rustup"
+    export PATH="$CARGO_HOME/bin:$PATH"
+
     cd /tmp/fish-{{ fish_version }}
     mkdir -p build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local
-    make
-    sudo make install
+
+    rustup show
+    rustup default stable
+    cargo --version
+    rustc --version
+
+    cmake .. \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      -DRust_COMPILER="$HOME/.cargo/bin/rustc" \
+      -DRust_CARGO="$HOME/.cargo/bin/cargo"
+
+    make -j"$(nproc)"
+    make install
   args:
     executable: /bin/bash
   environment:
     HOME: "/home/{{ target_user.stdout }}"
     USER: "{{ target_user.stdout }}"
     CARGO_HOME: "/home/{{ target_user.stdout }}/.cargo"
+    RUSTUP_HOME: "/home/{{ target_user.stdout }}/.rustup"
     PATH: "/home/{{ target_user.stdout }}/.cargo/bin:{{ ansible_env.PATH }}"
