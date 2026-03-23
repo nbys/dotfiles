@@ -10,7 +10,7 @@
     "context": "Workspace",
     "bindings": {
       // "shift shift": "file_finder::Toggle"
-    }
+    },
   },
   {
     "context": "Editor",
@@ -20,8 +20,8 @@
       "f6": "debugger::StepOver",
       "f7": "debugger::StepOut",
       "f8": "debugger::Continue",
-      "ctrl-`": "terminal_panel::ToggleFocus"
-    }
+      "ctrl-`": "terminal_panel::ToggleFocus",
+    },
   },
   {
     "context": "DebugPanel",
@@ -31,31 +31,25 @@
       "f6": "debugger::StepOver",
       "f7": "debugger::StepOut",
       "f8": "debugger::Continue",
-      "ctrl-`": "terminal_panel::ToggleFocus"
-    }
+      "ctrl-`": "terminal_panel::ToggleFocus",
+    },
   },
   {
     "context": "Terminal",
     "bindings": {
-      "ctrl-`": "terminal_panel::ToggleFocus"
-    }
+      "ctrl-`": "terminal_panel::ToggleFocus",
+    },
   },
   {
     "context": "Editor && vim_mode == normal",
     "bindings": {
-      "space y": [
-        "workspace::SendKeystrokes",
-        "\"*y"
-      ]
-    }
+      "space y": "vim::Yank",
+    },
   },
   {
     "context": "Editor && vim_mode == visual",
     "bindings": {
-      "space y": [
-        "workspace::SendKeystrokes",
-        "\"*y"
-      ]
-    }
-  }
+      "space y": "vim::VisualYank",
+    },
+  },
 ]
