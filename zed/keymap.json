@@ -10,13 +10,21 @@
     "context": "Workspace",
     "bindings": {
       // "shift shift": "file_finder::Toggle"
-    }
+    },
   },
   {
     "context": "!terminal",
     "bindings": {
       "ctrl-s": "workspace::Save",
-    }
+    },
+  },
+  {
+    "context": "Editor && !menu",
+    "bindings": {
+      "ctrl-v": "editor::Paste",
+      "ctrl-c": "editor::Copy",
+      "ctrl-x": "editor::Cut",
+    },
   },
   {
     "context": "Editor",
