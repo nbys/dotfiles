@@ -1,21 +1,24 @@
+local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+parser_config.cds = {
+	install_info = {
+		url = "https://github.com/cap-js-community/tree-sitter-cds.git",
+		branch = "main",
+		files = { "src/parser.c", "src/scanner.c" },
+	},
+	filetype = "cds",
+}
 local config = function()
-	local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-
-	parser_config.cds = {
-		install_info = {
-			url = "https://github.com/cap-js-community/tree-sitter-cds.git",
-			branch = "main",
-			files = { "src/parser.c", "src/scanner.c" },
-		},
-		filetype = "cds",
-	}
-
 	require("nvim-treesitter.configs").setup({
+		build = ":TSUpdate",
 		indent = {
 			enable = true,
 		},
 		autotag = {
 			enable = true,
+		},
+		event = {
+			"BufReadPre",
+			"BufNewFile",
 		},
 		ensure_installed = {
 			"rust",
@@ -26,6 +29,7 @@ local config = function()
 			"yaml",
 			"html",
 			"css",
+			"markdown",
 			"bash",
 			"lua",
 			"dockerfile",
@@ -57,7 +61,6 @@ end
 
 return {
 	"nvim-treesitter/nvim-treesitter",
-	build = ":TSUpdate",
 	lazy = false,
 	config = config,
 }
