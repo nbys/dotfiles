@@ -5,14 +5,37 @@
   ignore_errors: yes
   changed_when: false
 
-- name: Update APT package list
+- name: Install build dependencies
   apt:
+    name:
+      - ninja-build
+      - gettext
+      - cmake
+      - unzip
+      - curl
+      - build-essential
+      - git
+    state: present
     update_cache: yes
   when: neovim_installed.rc != 0
 
-- name: Install Neovim using APT
-  apt:
-    name: neovim
-    state: present
+- name: Clone Neovim repository
+  git:
+    repo: https://github.com/neovim/neovim.git
+    dest: /tmp/neovim
+    version: {{ neovim_versions }}
+    depth: 1
   when: neovim_installed.rc != 0
 
+- name: Build Neovim
+  command: make CMAKE_BUILD_TYPE=RelWithDebInfo
+  args:
+    chdir: /tmp/neovim
+  when: neovim_installed.rc != 0
+
+- name: Install Neovim
+  command: make install
+  args:
+    chdir: /tmp/neovim
+  become: true
+  when: neovim_installed.rc != 0

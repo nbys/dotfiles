@@ -1,6 +1,6 @@
 ---
 - name: Install Neovim
   vars:
-    neovim_version_aws_linux: "0.11.3"
+    neovim_version: "0.12.0"
   include_tasks: "roles/neovim/tasks/{{ ansible_os_family }}.yml"
 
