@@ -23,7 +23,7 @@
   git:
     repo: https://github.com/neovim/neovim.git
     dest: /tmp/neovim
-    version: {{ neovim_versions }}
+    version: "{{ neovim_versions }}"
     depth: 1
   when: neovim_installed.rc != 0
 
