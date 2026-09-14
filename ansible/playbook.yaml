@@ -15,8 +15,10 @@
       tags: tools
     - role: docker
       tags: docker
-    - role: fish
-      tags: fish
+    # - role: fish
+    #   tags: fish
+    - role: zsh
+      tags: zsh
     - role: python
       tags: python
     - role: go

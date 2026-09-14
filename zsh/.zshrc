@@ -76,7 +76,7 @@ tmux-sessionizer() {
   [[ -d "$selected" ]] || { print -u2 "tmux-sessionizer: not a directory: $selected"; return 1; }
 
   selected="${selected:A}"
-  local session_name="${selected:t//./_}"
+  local session_name="${${selected:t}//./_}"
 
   if ! pgrep -q tmux; then
     tmux new-session -s "$session_name" -c "$selected"
