@@ -2,7 +2,7 @@
 - name: Check if Neovim is already installed
   command: nvim --version
   register: neovim_installed
-  ignore_errors: yes
+  failed_when: false
   changed_when: false
 
 - name: Detect system architecture
@@ -55,7 +55,7 @@
 
 - name: Download Neovim tarball
   get_url:
-    url: "https://github.com/neovim/neovim/releases/download/v{{ neovim_version }}/nvim-{{ neovim_arch }}.tar.gz"
+    url: "https://github.com/neovim/neovim/releases/download/{{ neovim_version }}/nvim-{{ neovim_arch }}.tar.gz"
     dest: "/tmp/nvim-{{ neovim_arch }}.tar.gz"
   when: neovim_installed.rc != 0
 
@@ -78,4 +78,3 @@
     dest: "/usr/local/bin/nvim"
     state: link
   when: neovim_installed.rc != 0
-

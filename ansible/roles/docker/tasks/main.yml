@@ -8,11 +8,11 @@
     state: started
     enabled: yes
   register: docker_service_status
-  ignore_errors: yes
+  failed_when: false
+  when: ansible_virtualization_type not in ["docker", "container", "containerd", "podman"]
 
 - name: Log Docker service failure (if any)
   debug:
     msg: "Warning: Docker service failed to start. Check logs manually."
-  when: docker_service_status.failed
-
+  when: docker_service_status is failed
 
