@@ -1,8 +1,8 @@
 # Ansible playbook for my tools
 
 This playbook installs my tools on a fresh Ubuntu or AWS Linux machine.
-It installs both Fish and Zsh; the Zsh role also installs Oh My Zsh, the plugins
-used by the checked-in configuration, and links `~/.zshenv` to that configuration.
+The Zsh role also installs Oh My Zsh, the plugins used by the checked-in
+configuration, and links `~/.zshenv` to that configuration.
 
 To install only Zsh and its configuration dependencies, run:
 

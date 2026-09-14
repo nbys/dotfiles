@@ -1,22 +1,41 @@
 ---
-- name: Install Zsh
+- name: Determine the user running the playbook
+  ansible.builtin.command: whoami
+  become: false
+  register: zsh_target_user
+  changed_when: false
+
+- name: Look up the Zsh user's home directory
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ zsh_target_user.stdout }}"
+
+- name: Set the Zsh user's home directory
+  ansible.builtin.set_fact:
+    zsh_target_home: "{{ ansible_facts.getent_passwd[zsh_target_user.stdout][4] }}"
+
+- name: Install Zsh and Git
   ansible.builtin.package:
-    name: zsh
+    name:
+      - git
+      - zsh
     state: present
 
 - name: Install Oh My Zsh
   ansible.builtin.git:
     repo: https://github.com/ohmyzsh/ohmyzsh.git
-    dest: "/home/{{ target_user.stdout }}/.oh-my-zsh"
+    dest: "{{ zsh_target_home }}/.oh-my-zsh"
     depth: 1
     update: false
   become: true
-  become_user: "{{ target_user.stdout }}"
+  become_user: "{{ zsh_target_user.stdout }}"
+  environment:
+    HOME: "{{ zsh_target_home }}"
 
 - name: Install Zsh plugins
   ansible.builtin.git:
     repo: "{{ item.repo }}"
-    dest: "/home/{{ target_user.stdout }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
+    dest: "{{ zsh_target_home }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
     depth: 1
     update: false
   loop:
@@ -25,12 +44,13 @@
     - name: zsh-syntax-highlighting
       repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
   become: true
-  become_user: "{{ target_user.stdout }}"
+  become_user: "{{ zsh_target_user.stdout }}"
+  environment:
+    HOME: "{{ zsh_target_home }}"
 
 - name: Link Zsh environment configuration into the home directory
   ansible.builtin.file:
-    src: "/home/{{ target_user.stdout }}/.config/zsh/.zshenv"
-    dest: "/home/{{ target_user.stdout }}/.zshenv"
+    src: "{{ zsh_target_home }}/.config/zsh/.zshenv"
+    dest: "{{ zsh_target_home }}/.zshenv"
     state: link
-    owner: "{{ target_user.stdout }}"
-    group: "{{ target_user.stdout }}"
+    owner: "{{ zsh_target_user.stdout }}"
