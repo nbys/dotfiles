@@ -84,7 +84,7 @@ tmux-sessionizer() {
   if [[ -n "$TMUX" ]]; then
     tmux switch-client -t "=$session_name"
   else
-    tmux attach-session -t "=$session_name" </dev/tty
+    tmux attach-session -t "=$session_name"
   fi
 }
 
@@ -101,8 +101,12 @@ _project_session_widget() {
     -not -path '*/.*' \
     -not -path '*/__pycache__' \
     -not -path '*/*.egg-info' | fzf) || return
-  tmux-sessionizer "$selected_dir"
-  zle reset-prompt
+  [[ -n "$selected_dir" ]] || return
+
+  # Run tmux after leaving ZLE so it inherits the shell's terminal.
+  BUFFER="tmux-sessionizer ${(q)selected_dir}"
+  CURSOR=${#BUFFER}
+  zle accept-line
 }
 
 _vf_widget() {
