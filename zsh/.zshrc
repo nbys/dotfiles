@@ -78,18 +78,13 @@ tmux-sessionizer() {
   selected="${selected:A}"
   local session_name="${${selected:t}//./_}"
 
-  if ! pgrep -q tmux; then
-    tmux new-session -s "$session_name" -c "$selected"
-    return
-  fi
-
   tmux has-session -t "=$session_name" 2>/dev/null ||
     tmux new-session -d -s "$session_name" -c "$selected"
 
   if [[ -n "$TMUX" ]]; then
     tmux switch-client -t "=$session_name"
   else
-    tmux attach-session -t "=$session_name"
+    tmux attach-session -t "=$session_name" </dev/tty
   fi
 }
 
