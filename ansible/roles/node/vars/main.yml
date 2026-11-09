@@ -1,2 +1,2 @@
 # renovate: datasource=node-version depName=node
-nodejs_version: "22"
+nodejs_version: "26"
