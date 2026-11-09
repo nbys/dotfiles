@@ -1,3 +1,3 @@
 ---
 # renovate: datasource=github-releases depName=fish-shell packageName=fish-shell/fish-shell versioning=loose
-fish_version: "4.5.0"
+fish_version: "4.9.3"
