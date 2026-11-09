@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "enabledManagers": [
+    "custom.regex"
+  ],
+  "dependencyDashboard": false,
+  "semanticCommits": "enabled",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update annotated Ansible version pins",
+      "managerFilePatterns": [
+        "/^ansible\\/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: packageName=(?<packageName>\\S+))?(?: versioning=(?<versioning>\\S+))?(?: extractVersion=(?<extractVersion>\\S+))?\\s+[^\\n]*?_version:\\s*[\"']?(?<currentValue>[^\"'\\s]+)"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Open one PR for all pinned tool updates",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "groupName": "pinned tool versions",
+      "groupSlug": "pinned-tool-versions",
+      "separateMajorMinor": false
+    }
+  ]
+}
+

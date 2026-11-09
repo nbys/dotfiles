@@ -1,1 +1,2 @@
+# renovate: datasource=github-releases depName=kubectl packageName=kubernetes/kubernetes
 kubectl_version: "v1.32.3"

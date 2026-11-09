@@ -1,1 +1,2 @@
+# renovate: datasource=github-releases depName=erlang-otp packageName=erlang/otp versioning=loose extractVersion=^OTP-(?<version>.*)$
 erlang_version: "27.3"
