@@ -1,1 +1,15 @@
-Code
+github-copilot
+.DS_Store
+nvm
+iterm2
+zed/conversations
+zed/embeddings
+zed/prompts
+gcloud
+cagent
+zsh/.zcompdump*
+zsh/.zsh_history
+zsh/*.zwc
+.zcompdump-Nikolay’s MacBook Pro-5.9
+opencode
+homebrew
