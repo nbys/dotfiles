@@ -1,20 +1,61 @@
 ---
-- name: Check whether Docker Desktop is installed
+- name: Check whether the Docker Desktop application exists
   become: false
-  ansible.builtin.command: "{{ homebrew_bin }} list --cask --versions docker"
-  register: docker_desktop_check
+  ansible.builtin.stat:
+    path: /Applications/Docker.app
+  register: docker_desktop_application
+
+- name: Check whether Docker Desktop is managed by Homebrew
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} list --cask --versions docker-desktop"
+  register: docker_desktop_homebrew_check
   changed_when: false
   failed_when: false
   check_mode: false
 
 - name: Install Docker Desktop
   become: false
-  ansible.builtin.command: "{{ homebrew_bin }} install --cask docker"
-  when: docker_desktop_check.rc != 0
+  ansible.builtin.command: "{{ homebrew_bin }} install --cask docker-desktop"
+  register: docker_desktop_install
+  when:
+    - not docker_desktop_application.stat.exists
+    - docker_desktop_homebrew_check.rc != 0
+
+- name: Preserve an existing Docker Desktop application
+  ansible.builtin.debug:
+    msg: >-
+      Docker Desktop already exists at /Applications/Docker.app and is not
+      managed by Homebrew. Preserving the existing installation.
+  when:
+    - docker_desktop_application.stat.exists
+    - docker_desktop_homebrew_check.rc != 0
+
+- name: Detect the installed Docker Desktop version
+  become: false
+  ansible.builtin.command:
+    argv:
+      - /usr/libexec/PlistBuddy
+      - -c
+      - "Print :CFBundleShortVersionString"
+      - /Applications/Docker.app/Contents/Info.plist
+  register: docker_desktop_version
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Show the installed Docker Desktop version
+  ansible.builtin.debug:
+    msg:
+      tool: Docker Desktop
+      installed: "{{ docker_desktop_version.stdout }}"
+      managed_by: >-
+        {{ 'Homebrew' if docker_desktop_homebrew_check.rc == 0 or
+           docker_desktop_install is changed else 'existing application' }}
+  when: docker_desktop_version.rc == 0
 
 - name: Explain how to start Docker Desktop
   ansible.builtin.debug:
     msg: "Docker Desktop is installed. Open it once from Applications to finish setup."
   when:
-    - docker_desktop_check.rc != 0
+    - docker_desktop_install is changed
     - not ansible_check_mode
