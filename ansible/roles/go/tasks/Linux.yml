@@ -1,0 +1,44 @@
+---
+- name: Detect architecture
+  ansible.builtin.command: uname -m
+  register: arch_raw
+  changed_when: false
+
+- name: Map architecture to Go's format
+  ansible.builtin.set_fact:
+    go_arch: >-
+      {{ 'amd64' if arch_raw.stdout == 'x86_64' else
+         'arm64' if arch_raw.stdout in ['aarch64', 'arm64'] else
+         'unsupported' }}
+
+- name: Fail if architecture is unsupported
+  ansible.builtin.fail:
+    msg: "Unsupported architecture: {{ arch_raw.stdout }}"
+  when: go_arch == 'unsupported'
+
+- name: Set Go download details
+  ansible.builtin.set_fact:
+    go_filename: "go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    go_url: "https://go.dev/dl/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+
+- name: Download Go archive
+  ansible.builtin.get_url:
+    url: "{{ go_url }}"
+    dest: "/tmp/{{ go_filename }}"
+    mode: "0644"
+
+- name: Extract Go archive
+  become: false
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ go_filename }}"
+    dest: "{{ target_home }}"
+    remote_src: true
+    creates: "{{ target_home }}/go/bin/go"
+
+- name: Create symlink to Go binary in /usr/local/bin
+  ansible.builtin.file:
+    src: "{{ target_home }}/go/bin/go"
+    dest: /usr/local/bin/go
+    state: link
+    force: true
+  become: true

@@ -1,22 +1,49 @@
-- name: get the username running the deploy
+- name: Get the username running the playbook
   become: false
-  local_action: command whoami
+  ansible.builtin.command: whoami
   register: target_user
+  changed_when: false
+  check_mode: false
 
-- name: check if variable if defined
-  debug:
-    msg: "target_user is defined"
-  when: target_user is defined
+- name: Get the user's home directory
+  become: false
+  ansible.builtin.shell: 'printf %s "$HOME"'
+  args:
+    executable: /bin/sh
+  register: target_home_result
+  changed_when: false
+  check_mode: false
+
+- name: Get the user's primary group
+  become: false
+  ansible.builtin.command: id -gn
+  register: target_group_result
+  changed_when: false
+  check_mode: false
+
+- name: Set target user facts
+  ansible.builtin.set_fact:
+    target_home: "{{ target_home_result.stdout }}"
+    target_group: "{{ target_group_result.stdout }}"
+    homebrew_prefix: >-
+      {{ '/opt/homebrew'
+         if ansible_facts['os_family'] == 'Darwin' and ansible_facts['architecture'] in ['arm64', 'aarch64']
+         else '/usr/local' }}
+    homebrew_bin: >-
+      {{ '/opt/homebrew/bin/brew'
+         if ansible_facts['os_family'] == 'Darwin' and ansible_facts['architecture'] in ['arm64', 'aarch64']
+         else '/usr/local/bin/brew' }}
 
 - name: Check current system locale
-  command: locale | grep ^LANG=
+  ansible.builtin.command: locale
   register: current_locale
   changed_when: false
   failed_when: false
+  check_mode: false
 
 - name: Set fact for whether locale is already set to en_US.UTF-8
   set_fact:
     locale_is_set: "{{ 'LANG=en_US.UTF-8' in current_locale.stdout }}"
 
-- name: Include OS-specific fish installation
+- name: Include OS-specific setup
   include_tasks: "{{ ansible_os_family }}.yml"

@@ -1,0 +1,11 @@
+---
+- name: Add NodeSource Node.js {{ nodejs_version }}.x repository
+  ansible.builtin.shell: |
+    curl -fsSL https://rpm.nodesource.com/setup_{{ nodejs_version }}.x | bash -
+  args:
+    executable: /bin/bash
+
+- name: Install Node.js
+  ansible.builtin.package:
+    name: nodejs
+    state: present

@@ -1,6 +1,6 @@
 ---
 - name: Install Docker
-  include_tasks: "roles/docker/tasks/{{ ansible_os_family }}.yml"
+  include_tasks: "{{ ansible_os_family }}.yml"
 
 - name: Start and enable Docker service
   systemd:
@@ -9,10 +9,14 @@
     enabled: yes
   register: docker_service_status
   failed_when: false
-  when: ansible_virtualization_type not in ["docker", "container", "containerd", "podman"]
+  when:
+    - ansible_facts['os_family'] != "Darwin"
+    - ansible_virtualization_type not in ["docker", "container", "containerd", "podman"]
 
 - name: Log Docker service failure (if any)
   debug:
     msg: "Warning: Docker service failed to start. Check logs manually."
-  when: docker_service_status is failed
+  when:
+    - ansible_facts['os_family'] != "Darwin"
+    - docker_service_status is failed
 

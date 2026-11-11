@@ -1,11 +1,11 @@
 - name: Detect system architecture
   set_fact:
     kubectl_arch: >-
-      {{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' if ansible_architecture == 'aarch64' else 'unsupported' }}
+      {{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else 'arm64' if ansible_facts['architecture'] in ['aarch64', 'arm64'] else 'unsupported' }}
 
 - name: Fail if unsupported architecture
   fail:
-    msg: "Unsupported architecture: {{ ansible_architecture }}"
+    msg: "Unsupported architecture: {{ ansible_facts['architecture'] }}"
   when: kubectl_arch == 'unsupported'
 
 - name: Get latest stable kubectl version
@@ -13,10 +13,12 @@
     url: https://dl.k8s.io/release/stable.txt
     return_content: yes
   register: kubectl_latest
+  when: ansible_facts['os_family'] != 'Darwin'
 
 - name: Set kubectl version dynamically
   set_fact:
     kubectl_version: "{{ kubectl_latest.content | trim }}"
+  when: ansible_facts['os_family'] != 'Darwin'
 
 - name: Include OS-specific tasks
   include_tasks: "{{ ansible_os_family }}.yml"

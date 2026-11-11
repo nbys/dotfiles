@@ -1,15 +1,13 @@
 ---
 - name: Download rustup installer script
-  become: true
-  become_user: "{{ target_user.stdout }}"
+  become: false
   get_url:
     url: https://sh.rustup.rs
-    dest: "/home/{{ target_user.stdout }}/rustup-init.sh"
+    dest: "{{ target_home }}/rustup-init.sh"
     mode: "0755"
 
 - name: Install rustup and stable toolchain
-  become: true
-  become_user: "{{ target_user.stdout }}"
+  become: false
   shell: |
     set -e
     ./rustup-init.sh -y --profile default --default-toolchain stable
@@ -19,18 +17,17 @@
     cargo --version
     rustc --version
   args:
-    chdir: "/home/{{ target_user.stdout }}"
+    chdir: "{{ target_home }}"
     executable: /bin/bash
-    creates: "/home/{{ target_user.stdout }}/.cargo/bin/cargo"
+    creates: "{{ target_home }}/.cargo/bin/cargo"
   environment:
-    HOME: "/home/{{ target_user.stdout }}"
+    HOME: "{{ target_home }}"
     USER: "{{ target_user.stdout }}"
-    CARGO_HOME: "/home/{{ target_user.stdout }}/.cargo"
-    RUSTUP_HOME: "/home/{{ target_user.stdout }}/.rustup"
+    CARGO_HOME: "{{ target_home }}/.cargo"
+    RUSTUP_HOME: "{{ target_home }}/.rustup"
 
 - name: Remove rustup-init script after install
-  become: true
-  become_user: "{{ target_user.stdout }}"
+  become: false
   file:
-    path: "/home/{{ target_user.stdout }}/rustup-init.sh"
+    path: "{{ target_home }}/rustup-init.sh"
     state: absent

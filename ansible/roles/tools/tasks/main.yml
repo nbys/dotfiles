@@ -5,7 +5,6 @@
 - name: Clone tmux plugin manager
   git:
     repo: https://github.com/tmux-plugins/tpm
-    dest: "/home/{{ target_user.stdout }}/.tmux/plugins/tpm"
+    dest: "{{ target_home }}/.tmux/plugins/tpm"
     update: yes
-  become: yes
-  become_user: "{{ target_user.stdout }}"
+  become: false

@@ -1,0 +1,13 @@
+---
+- name: Check Neovim Homebrew package
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} list --versions neovim"
+  register: neovim_homebrew_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install Neovim
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} install neovim"
+  when: neovim_homebrew_check.rc != 0

@@ -1,10 +1,12 @@
 ---
-- name: Install Docker, Git, and Redshift CLI (RG)
+- name: Install development tools
   hosts: localhost
   become: yes
   roles:
     - role: setup
-      tags: setup
+      tags:
+        - always
+        - setup
     - role: deps
       tags: deps
     - role: node

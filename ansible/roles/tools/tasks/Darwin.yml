@@ -1,0 +1,23 @@
+---
+- name: Check common CLI Homebrew tools
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} list --versions {{ item }}"
+  loop:
+    - bat
+    - fd
+    - fzf
+    - ripgrep
+    - tmux
+    - tree
+  register: cli_homebrew_checks
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install missing common CLI Homebrew tools
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} install {{ item.item }}"
+  loop: "{{ cli_homebrew_checks.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.rc != 0

@@ -1,0 +1,19 @@
+---
+- name: Check Kubernetes Homebrew tools
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} list --versions {{ item }}"
+  loop:
+    - kubectl
+    - helm
+  register: kubernetes_homebrew_checks
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install missing Kubernetes Homebrew tools
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} install {{ item.item }}"
+  loop: "{{ kubernetes_homebrew_checks.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.rc != 0

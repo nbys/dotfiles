@@ -3,5 +3,5 @@
   vars:
     # renovate: datasource=github-releases depName=neovim packageName=neovim/neovim
     neovim_version: "v0.12.6"
-  include_tasks: "roles/neovim/tasks/{{ ansible_os_family }}.yml"
+  include_tasks: "{{ ansible_os_family }}.yml"
 

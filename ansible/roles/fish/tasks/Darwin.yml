@@ -1,0 +1,13 @@
+---
+- name: Check fish Homebrew package
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} list --versions fish"
+  register: fish_homebrew_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install fish
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} install fish"
+  when: fish_homebrew_check.rc != 0
