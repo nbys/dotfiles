@@ -1,3 +1,33 @@
 ---
+- name: Detect the installed fish version
+  become: false
+  ansible.builtin.command: fish --version
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: fish_version_before
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Decide whether fish needs to be updated
+  ansible.builtin.set_fact:
+    fish_needs_update: >-
+      {{ fish_version_before.rc != 0 or
+         fish_version_before.stdout != 'fish, version ' ~ fish_version }}
+
 - name: Include OS-specific fish installation
-  include_tasks: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+  when: fish_needs_update
+
+- name: Verify the requested fish version
+  become: false
+  ansible.builtin.command: fish --version
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: fish_version_after
+  changed_when: false
+  failed_when: >-
+    not ansible_check_mode and
+    (fish_version_after.rc != 0 or
+     fish_version_after.stdout != 'fish, version ' ~ fish_version)
+  check_mode: false

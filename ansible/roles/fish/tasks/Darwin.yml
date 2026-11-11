@@ -11,3 +11,8 @@
   become: false
   ansible.builtin.command: "{{ homebrew_bin }} install fish"
   when: fish_homebrew_check.rc != 0
+
+- name: Update fish
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade fish"
+  when: fish_homebrew_check.rc == 0

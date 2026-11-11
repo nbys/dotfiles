@@ -4,8 +4,10 @@
     curl -fsSL https://rpm.nodesource.com/setup_{{ nodejs_version }}.x | bash -
   args:
     executable: /bin/bash
+  when: node_needs_update
 
-- name: Install Node.js
+- name: Install or update Node.js
   ansible.builtin.package:
     name: nodejs
-    state: present
+    state: latest
+  when: node_needs_update

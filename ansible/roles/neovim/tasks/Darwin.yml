@@ -10,4 +10,13 @@
 - name: Install Neovim
   become: false
   ansible.builtin.command: "{{ homebrew_bin }} install neovim"
-  when: neovim_homebrew_check.rc != 0
+  when:
+    - neovim_needs_update
+    - neovim_homebrew_check.rc != 0
+
+- name: Update Neovim
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade neovim"
+  when:
+    - neovim_needs_update
+    - neovim_homebrew_check.rc == 0

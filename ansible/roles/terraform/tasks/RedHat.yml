@@ -10,7 +10,8 @@
     dest: /etc/yum.repos.d/hashicorp.repo
     mode: '0644'
 
-- name: Install Terraform
+- name: Install or update Terraform
   ansible.builtin.dnf:
     name: terraform
-    state: present
+    state: latest
+  when: terraform_needs_update

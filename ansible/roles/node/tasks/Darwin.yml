@@ -10,7 +10,16 @@
 - name: Install Node.js {{ nodejs_version }}
   become: false
   ansible.builtin.command: "{{ homebrew_bin }} install node@{{ nodejs_version }}"
-  when: node_homebrew_check.rc != 0
+  when:
+    - node_needs_update
+    - node_homebrew_check.rc != 0
+
+- name: Update Node.js {{ nodejs_version }}
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade node@{{ nodejs_version }}"
+  when:
+    - node_needs_update
+    - node_homebrew_check.rc == 0
 
 - name: Link Node.js {{ nodejs_version }} into Homebrew's prefix
   become: false
@@ -19,3 +28,4 @@
   changed_when: >-
     'Already linked' not in
     (node_homebrew_link.stdout + node_homebrew_link.stderr)
+  when: node_needs_update

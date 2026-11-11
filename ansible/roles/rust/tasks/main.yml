@@ -1,33 +1,84 @@
 ---
+- name: Detect the installed Rust version
+  become: false
+  ansible.builtin.command: "{{ target_home }}/.cargo/bin/rustc --version"
+  register: rust_version_before
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Decide whether Rust needs to be updated
+  ansible.builtin.set_fact:
+    rust_needs_update: >-
+      {{ rust_version_before.rc != 0 or
+         not (rust_version_before.stdout is match(
+           '^rustc ' ~ (rust_version | regex_escape) ~ ' '
+         )) }}
+
+- name: Check whether rustup is installed
+  become: false
+  ansible.builtin.stat:
+    path: "{{ target_home }}/.cargo/bin/rustup"
+  register: rustup_binary
+
 - name: Download rustup installer script
   become: false
-  get_url:
+  ansible.builtin.get_url:
     url: https://sh.rustup.rs
     dest: "{{ target_home }}/rustup-init.sh"
     mode: "0755"
+  when: not rustup_binary.stat.exists
 
-- name: Install rustup and stable toolchain
+- name: Install rustup
   become: false
-  shell: |
+  ansible.builtin.shell: |
     set -e
-    ./rustup-init.sh -y --profile default --default-toolchain stable
-    export PATH="$HOME/.cargo/bin:$PATH"
-    rustup show
-    rustup default stable
-    cargo --version
-    rustc --version
+    ./rustup-init.sh -y --profile default --default-toolchain none
   args:
     chdir: "{{ target_home }}"
     executable: /bin/bash
-    creates: "{{ target_home }}/.cargo/bin/cargo"
   environment:
     HOME: "{{ target_home }}"
     USER: "{{ target_user.stdout }}"
     CARGO_HOME: "{{ target_home }}/.cargo"
     RUSTUP_HOME: "{{ target_home }}/.rustup"
+  when: not rustup_binary.stat.exists
+
+- name: Install Rust {{ rust_version }}
+  become: false
+  ansible.builtin.command: >-
+    {{ target_home }}/.cargo/bin/rustup toolchain install
+    {{ rust_version }} --profile default
+  environment:
+    HOME: "{{ target_home }}"
+    CARGO_HOME: "{{ target_home }}/.cargo"
+    RUSTUP_HOME: "{{ target_home }}/.rustup"
+  when: rust_needs_update
+
+- name: Select Rust {{ rust_version }} as the default toolchain
+  become: false
+  ansible.builtin.command: "{{ target_home }}/.cargo/bin/rustup default {{ rust_version }}"
+  environment:
+    HOME: "{{ target_home }}"
+    CARGO_HOME: "{{ target_home }}/.cargo"
+    RUSTUP_HOME: "{{ target_home }}/.rustup"
+  when: rust_needs_update
 
 - name: Remove rustup-init script after install
   become: false
-  file:
+  ansible.builtin.file:
     path: "{{ target_home }}/rustup-init.sh"
     state: absent
+
+- name: Verify the requested Rust version
+  become: false
+  ansible.builtin.command: "{{ target_home }}/.cargo/bin/rustc --version"
+  register: rust_version_after
+  changed_when: false
+  failed_when: >-
+    not ansible_check_mode and
+    (rust_version_after.rc != 0 or
+     not (rust_version_after.stdout is match(
+       '^rustc ' ~ (rust_version | regex_escape) ~ ' '
+     )))
+  check_mode: false

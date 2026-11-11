@@ -1,6 +1,52 @@
 ---
-- name: Include OS-specific fish installation
-  include_tasks: "{{ ansible_os_family }}.yml"
+- name: Detect the installed Erlang/OTP version
+  become: false
+  ansible.builtin.shell: |
+    erl -noshell -eval '
+      Root = code:root_dir(),
+      Release = erlang:system_info(otp_release),
+      {ok, Version} = file:read_file(filename:join([Root, "releases", Release, "OTP_VERSION"])),
+      io:format("~s", [string:trim(binary_to_list(Version))]),
+      halt().'
+  args:
+    executable: /bin/sh
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: erlang_version_before
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Decide whether Erlang/OTP needs to be updated
+  ansible.builtin.set_fact:
+    erlang_needs_update: >-
+      {{ erlang_version_before.rc != 0 or
+         erlang_version_before.stdout != erlang_version }}
+
+- name: Include OS-specific Erlang installation
+  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+  when: erlang_needs_update
+
+- name: Verify the requested Erlang/OTP version
+  become: false
+  ansible.builtin.shell: |
+    erl -noshell -eval '
+      Root = code:root_dir(),
+      Release = erlang:system_info(otp_release),
+      {ok, Version} = file:read_file(filename:join([Root, "releases", Release, "OTP_VERSION"])),
+      io:format("~s", [string:trim(binary_to_list(Version))]),
+      halt().'
+  args:
+    executable: /bin/sh
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: erlang_version_after
+  changed_when: false
+  failed_when: >-
+    not ansible_check_mode and
+    (erlang_version_after.rc != 0 or
+     erlang_version_after.stdout != erlang_version)
+  check_mode: false
 
 - name: Install erlang_ls
-  include_tasks: erlang_ls.yml
+  ansible.builtin.include_tasks: erlang_ls.yml

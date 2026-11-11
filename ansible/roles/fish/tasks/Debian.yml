@@ -14,4 +14,4 @@
 - name: Install fish shell on Ubuntu
   apt:
     name: fish
-    state: present
+    state: latest

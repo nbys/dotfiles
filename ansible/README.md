@@ -25,6 +25,41 @@ ansible-playbook playbook.yaml -K
 The Docker role installs Docker Desktop. After the first run, open Docker from
 Applications once to accept its terms and finish the privileged setup.
 
+To refresh Homebrew metadata, upgrade installed Homebrew packages when any are
+outdated, and install missing build dependencies, run:
+
+```bash
+ansible-playbook playbook.yaml --tags deps -K
+```
+
+## Updating tool versions
+
+Pinned versions live in each role's `vars/main.yml`. Change the value and run
+only that role; Ansible compares the installed version, updates it when needed,
+and verifies the result. For example:
+
+```bash
+# Edit roles/neovim/vars/main.yml, then:
+ansible-playbook playbook.yaml --tags neovim -K
+```
+
+The version-aware roles are:
+
+- `node` (`nodejs_version` is a major release such as `26`)
+- `rust` (`rust_version`)
+- `go` (`go_version`)
+- `python` (`python_version`)
+- `neovim` (`neovim_version`, including the leading `v`)
+- `k8s` (`kubectl_version`, including the leading `v`)
+- `terraform` (`terraform_version`)
+- `fish` (`fish_version`, when the role is enabled)
+- `erlang` (`erlang_version`, when the role is enabled)
+
+For package-manager installations, the configured repository must already offer
+the requested version. The role fails its final version check if Homebrew, APT,
+or DNF has not caught up yet, rather than silently leaving a different version
+installed.
+
 ## Tests and development
 
 Start a container with the following command:

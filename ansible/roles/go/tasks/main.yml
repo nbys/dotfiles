@@ -1,3 +1,36 @@
 ---
+- name: Detect the installed Go version
+  become: false
+  ansible.builtin.command: go version
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: go_version_before
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Decide whether Go needs to be updated
+  ansible.builtin.set_fact:
+    go_needs_update: >-
+      {{ go_version_before.rc != 0 or
+         not (go_version_before.stdout is match(
+           '^go version go' ~ (go_version | regex_escape) ~ ' '
+         )) }}
+
 - name: Include OS-specific Go installation
   ansible.builtin.include_tasks: "{{ ansible_facts['system'] }}.yml"
+
+- name: Verify the requested Go version
+  become: false
+  ansible.builtin.command: go version
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: go_version_after
+  changed_when: false
+  failed_when: >-
+    not ansible_check_mode and
+    (go_version_after.rc != 0 or
+     not (go_version_after.stdout is match(
+       '^go version go' ~ (go_version | regex_escape) ~ ' '
+     )))
+  check_mode: false

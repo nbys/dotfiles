@@ -1,7 +1,35 @@
 ---
-- name: Install Neovim
-  vars:
-    # renovate: datasource=github-releases depName=neovim packageName=neovim/neovim
-    neovim_version: "v0.12.6"
-  include_tasks: "{{ ansible_os_family }}.yml"
+- name: Detect the installed Neovim version
+  become: false
+  ansible.builtin.command: nvim --version
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: neovim_version_before
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Decide whether Neovim needs to be updated
+  ansible.builtin.set_fact:
+    neovim_needs_update: >-
+      {{ neovim_version_before.rc != 0 or
+         (neovim_version_before.stdout_lines | default([]) | first | default('')) !=
+         'NVIM ' ~ neovim_version }}
+
+- name: Install or update Neovim
+  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+
+- name: Verify the requested Neovim version
+  become: false
+  ansible.builtin.command: nvim --version
+  environment:
+    PATH: "{{ homebrew_prefix }}/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: neovim_version_after
+  changed_when: false
+  failed_when: >-
+    not ansible_check_mode and
+    (neovim_version_after.rc != 0 or
+     (neovim_version_after.stdout_lines | default([]) | first | default('')) !=
+     'NVIM ' ~ neovim_version)
+  check_mode: false
 

@@ -8,10 +8,10 @@
 
 - name: Install kubectl
   get_url:
-    url: https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/amd64/kubectl
+    url: https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl
     dest: /usr/local/bin/kubectl
     mode: '0755'
-  when: kubectl_version is defined
+  when: kubectl_needs_update
 
 - name: Download Helm install script
   get_url:

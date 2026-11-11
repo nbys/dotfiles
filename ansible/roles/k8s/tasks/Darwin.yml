@@ -1,19 +1,35 @@
 ---
-- name: Check Kubernetes Homebrew tools
+- name: Check kubectl Homebrew package
   become: false
-  ansible.builtin.command: "{{ homebrew_bin }} list --versions {{ item }}"
-  loop:
-    - kubectl
-    - helm
-  register: kubernetes_homebrew_checks
+  ansible.builtin.command: "{{ homebrew_bin }} list --versions kubectl"
+  register: kubectl_homebrew_check
   changed_when: false
   failed_when: false
   check_mode: false
 
-- name: Install missing Kubernetes Homebrew tools
+- name: Install kubectl
   become: false
-  ansible.builtin.command: "{{ homebrew_bin }} install {{ item.item }}"
-  loop: "{{ kubernetes_homebrew_checks.results }}"
-  loop_control:
-    label: "{{ item.item }}"
-  when: item.rc != 0
+  ansible.builtin.command: "{{ homebrew_bin }} install kubectl"
+  when:
+    - kubectl_needs_update
+    - kubectl_homebrew_check.rc != 0
+
+- name: Update kubectl
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade kubectl"
+  when:
+    - kubectl_needs_update
+    - kubectl_homebrew_check.rc == 0
+
+- name: Check Helm Homebrew package
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} list --versions helm"
+  register: helm_homebrew_check
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install Helm
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} install helm"
+  when: helm_homebrew_check.rc != 0

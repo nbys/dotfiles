@@ -10,4 +10,13 @@
 - name: Install Go
   become: false
   ansible.builtin.command: "{{ homebrew_bin }} install go"
-  when: go_homebrew_check.rc != 0
+  when:
+    - go_needs_update
+    - go_homebrew_check.rc != 0
+
+- name: Update Go
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade go"
+  when:
+    - go_needs_update
+    - go_homebrew_check.rc == 0

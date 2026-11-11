@@ -1,42 +1,30 @@
 ---
-- name: Check if Neovim is already installed
-  command: nvim --version
-  register: neovim_installed
-  failed_when: false
-  changed_when: false
-
 - name: Detect system architecture
-  command: uname -m
+  ansible.builtin.command: uname -m
   register: system_architecture
   changed_when: false
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Set architecture-specific Neovim tarball
-  set_fact:
+  ansible.builtin.set_fact:
     neovim_arch: >-
       {%- if system_architecture.stdout == "x86_64" -%}
         linux-x86_64
-      {%- elif system_architecture.stdout == "aarch64" -%}
+      {%- elif system_architecture.stdout in ["aarch64", "arm64"] -%}
         linux-arm64
       {%- else -%}
         unsupported
       {%- endif -%}
-  when: neovim_installed.rc != 0
-
-- name: Update YUM package manager
-  yum:
-    name: '*'
-    state: latest
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Install Development Tools
-  yum:
+  ansible.builtin.yum:
     name: "@Development tools"
     state: present
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Install dependencies for Neovim
-  yum:
+  ansible.builtin.yum:
     name:
       - tar
       - gcc
@@ -51,30 +39,30 @@
       - gzip
       - xz
     state: present
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Download Neovim tarball
-  get_url:
+  ansible.builtin.get_url:
     url: "https://github.com/neovim/neovim/releases/download/{{ neovim_version }}/nvim-{{ neovim_arch }}.tar.gz"
-    dest: "/tmp/nvim-{{ neovim_arch }}.tar.gz"
-  when: neovim_installed.rc != 0
+    dest: "/tmp/nvim-{{ neovim_version }}-{{ neovim_arch }}.tar.gz"
+  when: neovim_needs_update
 
 - name: Verify downloaded Neovim tarball
-  command: ls -lh /tmp/nvim-{{ neovim_arch }}.tar.gz
+  ansible.builtin.command: ls -lh /tmp/nvim-{{ neovim_version }}-{{ neovim_arch }}.tar.gz
   register: tarball_check
   changed_when: false
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Extract Neovim tarball
-  unarchive:
-    src: "/tmp/nvim-{{ neovim_arch }}.tar.gz"
+  ansible.builtin.unarchive:
+    src: "/tmp/nvim-{{ neovim_version }}-{{ neovim_arch }}.tar.gz"
     dest: "/usr/local"
     remote_src: yes
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Create symlink for Neovim
-  file:
+  ansible.builtin.file:
     src: "/usr/local/nvim-{{ neovim_arch }}/bin/nvim"
     dest: "/usr/local/bin/nvim"
     state: link
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update

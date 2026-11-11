@@ -15,7 +15,7 @@
   shell: |
     set -euo pipefail
 
-    export HOME="/home/{{ target_user.stdout }}"
+    export HOME="{{ target_home }}"
     export USER="{{ target_user.stdout }}"
     export CARGO_HOME="$HOME/.cargo"
     export RUSTUP_HOME="$HOME/.rustup"
@@ -40,8 +40,8 @@
   args:
     executable: /bin/bash
   environment:
-    HOME: "/home/{{ target_user.stdout }}"
+    HOME: "{{ target_home }}"
     USER: "{{ target_user.stdout }}"
-    CARGO_HOME: "/home/{{ target_user.stdout }}/.cargo"
-    RUSTUP_HOME: "/home/{{ target_user.stdout }}/.rustup"
-    PATH: "/home/{{ target_user.stdout }}/.cargo/bin:{{ ansible_env.PATH }}"
+    CARGO_HOME: "{{ target_home }}/.cargo"
+    RUSTUP_HOME: "{{ target_home }}/.rustup"
+    PATH: "{{ target_home }}/.cargo/bin:{{ ansible_facts['env']['PATH'] }}"

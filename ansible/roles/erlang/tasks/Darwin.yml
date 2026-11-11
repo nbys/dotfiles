@@ -17,3 +17,13 @@
   loop_control:
     label: "{{ item.item }}"
   when: item.rc != 0
+
+- name: Update Erlang/OTP
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade erlang"
+  when:
+    - item.item == 'erlang'
+    - item.rc == 0
+  loop: "{{ erlang_homebrew_checks.results }}"
+  loop_control:
+    label: "{{ item.item }}"

@@ -1,0 +1,3 @@
+---
+# renovate: datasource=github-releases depName=terraform packageName=hashicorp/terraform versioning=semver-coerced extractVersion=^v(?<version>.*)$
+terraform_version: "1.14.9"

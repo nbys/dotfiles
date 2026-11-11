@@ -20,25 +20,38 @@
   ansible.builtin.set_fact:
     go_filename: "go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
     go_url: "https://go.dev/dl/go{{ go_version }}.linux-{{ go_arch }}.tar.gz"
+    go_install_dir: "/usr/local/lib/go-{{ go_version }}"
 
-- name: Download Go archive
+- name: Download Go {{ go_version }}
   ansible.builtin.get_url:
     url: "{{ go_url }}"
     dest: "/tmp/{{ go_filename }}"
     mode: "0644"
+  when: go_needs_update
 
-- name: Extract Go archive
-  become: false
+- name: Create the versioned Go installation directory
+  ansible.builtin.file:
+    path: "{{ go_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: go_needs_update
+
+- name: Extract Go {{ go_version }}
   ansible.builtin.unarchive:
     src: "/tmp/{{ go_filename }}"
-    dest: "{{ target_home }}"
+    dest: "{{ go_install_dir }}"
     remote_src: true
-    creates: "{{ target_home }}/go/bin/go"
+    extra_opts:
+      - --strip-components=1
+    creates: "{{ go_install_dir }}/bin/go"
+  when: go_needs_update
 
-- name: Create symlink to Go binary in /usr/local/bin
+- name: Select Go {{ go_version }}
   ansible.builtin.file:
-    src: "{{ target_home }}/go/bin/go"
+    src: "{{ go_install_dir }}/bin/go"
     dest: /usr/local/bin/go
     state: link
     force: true
-  become: true
+  when: go_needs_update

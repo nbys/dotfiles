@@ -1,8 +1,43 @@
+- name: Detect the installed Node.js version
+  become: false
+  ansible.builtin.command: node --version
+  environment:
+    PATH: "{{ homebrew_prefix }}/opt/node@{{ nodejs_version }}/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: node_version_before
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Decide whether Node.js needs to be updated
+  ansible.builtin.set_fact:
+    node_needs_update: >-
+      {{ node_version_before.rc != 0 or
+         not (node_version_before.stdout is match(
+           '^v' ~ (nodejs_version | regex_escape) ~
+           ('\\.' if '.' not in nodejs_version else '$')
+         )) }}
+
 - name: Include OS-specific Node.js installation
-  ansible.builtin.include_tasks: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+
+- name: Verify the requested Node.js version
+  become: false
+  ansible.builtin.command: node --version
+  environment:
+    PATH: "{{ homebrew_prefix }}/opt/node@{{ nodejs_version }}/bin:{{ ansible_facts['env']['PATH'] }}"
+  register: node_version_after
+  changed_when: false
+  failed_when: >-
+    not ansible_check_mode and
+    (node_version_after.rc != 0 or
+     not (node_version_after.stdout is match(
+       '^v' ~ (nodejs_version | regex_escape) ~
+       ('\\.' if '.' not in nodejs_version else '$')
+     )))
+  check_mode: false
 
 - name: Install global npm packages using shell
-  shell: |
+  ansible.builtin.shell: |
     npm install -g tree-sitter-cli typescript dockerfile-language-server-nodejs
   args:
     executable: /bin/bash

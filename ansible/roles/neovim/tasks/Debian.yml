@@ -1,12 +1,6 @@
 ---
-- name: Check if Neovim is already installed
-  command: nvim --version
-  register: neovim_installed
-  failed_when: false
-  changed_when: false
-
 - name: Install build dependencies
-  apt:
+  ansible.builtin.apt:
     name:
       - ninja-build
       - gettext
@@ -17,25 +11,26 @@
       - git
     state: present
     update_cache: yes
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Clone Neovim repository
-  git:
+  ansible.builtin.git:
     repo: https://github.com/neovim/neovim.git
     dest: /tmp/neovim
     version: "{{ neovim_version }}"
     depth: 1
-  when: neovim_installed.rc != 0
+    force: true
+  when: neovim_needs_update
 
 - name: Build Neovim
-  command: make CMAKE_BUILD_TYPE=RelWithDebInfo
+  ansible.builtin.command: make CMAKE_BUILD_TYPE=RelWithDebInfo
   args:
     chdir: /tmp/neovim
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update
 
 - name: Install Neovim
-  command: make install
+  ansible.builtin.command: make install
   args:
     chdir: /tmp/neovim
   become: true
-  when: neovim_installed.rc != 0
+  when: neovim_needs_update

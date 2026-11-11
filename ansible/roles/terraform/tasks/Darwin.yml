@@ -10,4 +10,13 @@
 - name: Install Terraform
   become: false
   ansible.builtin.command: "{{ homebrew_bin }} install hashicorp/tap/terraform"
-  when: terraform_homebrew_check.rc != 0
+  when:
+    - terraform_needs_update
+    - terraform_homebrew_check.rc != 0
+
+- name: Update Terraform
+  become: false
+  ansible.builtin.command: "{{ homebrew_bin }} upgrade hashicorp/tap/terraform"
+  when:
+    - terraform_needs_update
+    - terraform_homebrew_check.rc == 0

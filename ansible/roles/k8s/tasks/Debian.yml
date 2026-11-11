@@ -10,18 +10,21 @@
     url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl"
     dest: /tmp/kubectl
     mode: '0755'
+  when: kubectl_needs_update
 
 - name: Download kubectl checksum
   get_url:
     url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl.sha256"
     dest: /tmp/kubectl.sha256
     mode: '0644'
+  when: kubectl_needs_update
 
 - name: Verify kubectl checksum
   shell: |
     echo "$(cat /tmp/kubectl.sha256)  /tmp/kubectl" | sha256sum --check
   register: checksum_result
   failed_when: "'OK' not in checksum_result.stdout"
+  when: kubectl_needs_update
 
 - name: Install kubectl binary
   copy:
@@ -31,6 +34,7 @@
     owner: root
     group: root
     mode: '0755'
+  when: kubectl_needs_update
 
 
 - name: Download Helm install script
