@@ -39,3 +39,11 @@
     (kubectl_version_after.rc != 0 or
      (kubectl_version | string) not in kubectl_version_after.stdout)
   check_mode: false
+
+- name: Show the installed kubectl version
+  ansible.builtin.debug:
+    msg:
+      tool: kubectl
+      requested: "{{ kubectl_version }}"
+      installed: "{{ kubectl_version_after.stdout_lines | join(' | ') }}"
+  when: kubectl_version_after.rc == 0

@@ -33,3 +33,12 @@
      'NVIM ' ~ neovim_version)
   check_mode: false
 
+- name: Show the installed Neovim version
+  ansible.builtin.debug:
+    msg:
+      tool: Neovim
+      requested: "{{ neovim_version }}"
+      installed: >-
+        {{ neovim_version_after.stdout_lines | default([]) | first | default('unknown') }}
+  when: neovim_version_after.rc == 0
+

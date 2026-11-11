@@ -116,3 +116,11 @@
      python_version_after.stdout != 'Python ' ~ python_version)
   check_mode: false
 
+- name: Show the installed Python version
+  ansible.builtin.debug:
+    msg:
+      tool: Python
+      requested: "{{ python_version }}"
+      installed: "{{ python_version_after.stdout }}"
+  when: python_version_after.rc == 0
+

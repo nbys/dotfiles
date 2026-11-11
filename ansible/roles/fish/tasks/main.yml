@@ -31,3 +31,11 @@
     (fish_version_after.rc != 0 or
      fish_version_after.stdout != 'fish, version ' ~ fish_version)
   check_mode: false
+
+- name: Show the installed fish version
+  ansible.builtin.debug:
+    msg:
+      tool: fish
+      requested: "{{ fish_version }}"
+      installed: "{{ fish_version_after.stdout }}"
+  when: fish_version_after.rc == 0

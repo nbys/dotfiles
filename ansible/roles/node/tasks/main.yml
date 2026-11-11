@@ -36,6 +36,14 @@
      )))
   check_mode: false
 
+- name: Show the installed Node.js version
+  ansible.builtin.debug:
+    msg:
+      tool: Node.js
+      requested: "{{ nodejs_version }}"
+      installed: "{{ node_version_after.stdout }}"
+  when: node_version_after.rc == 0
+
 - name: Install global npm packages using shell
   ansible.builtin.shell: |
     npm install -g tree-sitter-cli typescript dockerfile-language-server-nodejs

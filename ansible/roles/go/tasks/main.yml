@@ -34,3 +34,11 @@
        '^go version go' ~ (go_version | regex_escape) ~ ' '
      )))
   check_mode: false
+
+- name: Show the installed Go version
+  ansible.builtin.debug:
+    msg:
+      tool: Go
+      requested: "{{ go_version }}"
+      installed: "{{ go_version_after.stdout }}"
+  when: go_version_after.rc == 0

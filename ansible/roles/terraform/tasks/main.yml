@@ -32,3 +32,12 @@
      (terraform_version_after.stdout_lines | default([]) | first | default('')) !=
      'Terraform v' ~ terraform_version)
   check_mode: false
+
+- name: Show the installed Terraform version
+  ansible.builtin.debug:
+    msg:
+      tool: Terraform
+      requested: "{{ terraform_version }}"
+      installed: >-
+        {{ terraform_version_after.stdout_lines | default([]) | first | default('unknown') }}
+  when: terraform_version_after.rc == 0

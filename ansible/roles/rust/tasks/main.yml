@@ -82,3 +82,11 @@
        '^rustc ' ~ (rust_version | regex_escape) ~ ' '
      )))
   check_mode: false
+
+- name: Show the installed Rust version
+  ansible.builtin.debug:
+    msg:
+      tool: Rust
+      requested: "{{ rust_version }}"
+      installed: "{{ rust_version_after.stdout }}"
+  when: rust_version_after.rc == 0

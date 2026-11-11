@@ -48,5 +48,13 @@
      erlang_version_after.stdout != erlang_version)
   check_mode: false
 
+- name: Show the installed Erlang/OTP version
+  ansible.builtin.debug:
+    msg:
+      tool: Erlang/OTP
+      requested: "{{ erlang_version }}"
+      installed: "{{ erlang_version_after.stdout }}"
+  when: erlang_version_after.rc == 0
+
 - name: Install erlang_ls
   ansible.builtin.include_tasks: erlang_ls.yml
