@@ -13,4 +13,4 @@ shell-integration-features  = no-cursor
 background		    = #232136
 
 macos-titlebar-style        = tabs
-confirm-close-surface	    = false
+confirm-close-surface       = false

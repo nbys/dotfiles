@@ -1,0 +1,67 @@
+---
+- name: Ensure the XDG configuration directory exists
+  ansible.builtin.file:
+    path: "{{ xdg_config_home }}"
+    state: directory
+    owner: "{{ target_user.stdout }}"
+    group: "{{ target_group }}"
+    mode: '0755'
+  become: false
+
+- name: Inspect Fedora XDG configuration targets
+  ansible.builtin.stat:
+    path: "{{ xdg_config_home }}/{{ item }}"
+  loop:
+    - dlv
+    - ghostty
+    - htop
+    - nvim
+    - pypoetry
+    - tmux
+    - zed
+    - zsh
+  register: fedora_xdg_targets
+  become: false
+  when: dotfiles_root != xdg_config_home
+
+- name: Link project configuration on Fedora
+  ansible.builtin.file:
+    src: "{{ dotfiles_root }}/{{ item.item }}"
+    dest: "{{ xdg_config_home }}/{{ item.item }}"
+    state: link
+    owner: "{{ target_user.stdout }}"
+  loop: "{{ fedora_xdg_targets.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item }}"
+  become: false
+  when:
+    - dotfiles_root != xdg_config_home
+    - not item.stat.exists or item.stat.islnk
+
+- name: Preserve existing Fedora configuration directories
+  ansible.builtin.debug:
+    msg: >-
+      Preserving {{ xdg_config_home }}/{{ item.item }} because it already
+      exists and is not a symlink.
+  loop: "{{ fedora_xdg_targets.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when:
+    - dotfiles_root != xdg_config_home
+    - item.stat.exists
+    - not item.stat.islnk
+
+- name: Inspect the tmux compatibility file
+  ansible.builtin.stat:
+    path: "{{ target_home }}/.tmux.conf"
+  register: tmux_compatibility_file
+  become: false
+
+- name: Link the tmux compatibility file
+  ansible.builtin.file:
+    src: "{{ dotfiles_root }}/tmux/tmux.conf"
+    dest: "{{ target_home }}/.tmux.conf"
+    state: link
+    owner: "{{ target_user.stdout }}"
+  become: false
+  when: not tmux_compatibility_file.stat.exists or tmux_compatibility_file.stat.islnk

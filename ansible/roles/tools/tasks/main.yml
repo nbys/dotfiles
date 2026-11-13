@@ -1,6 +1,6 @@
 ---
 - name: Include OS-specific fish installation
-  include_tasks: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "{{ platform_task_file }}"
 
 - name: Clone tmux plugin manager
   git:

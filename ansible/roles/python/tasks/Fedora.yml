@@ -1,0 +1,27 @@
+---
+- name: Install Fedora build dependencies for pyenv
+  ansible.builtin.dnf:
+    name:
+      - bzip2
+      - bzip2-devel
+      - curl
+      - gcc
+      - gcc-c++
+      - gdbm-libs
+      - libffi-devel
+      - libnsl2
+      - libuuid-devel
+      - libzstd-devel
+      - make
+      - ncurses-devel
+      - openssl-devel
+      - patch
+      - readline-devel
+      - sqlite
+      - sqlite-devel
+      - tk8-devel
+      - wget
+      - xz-devel
+      - zlib-devel
+    state: present
+    update_cache: true

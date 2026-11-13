@@ -25,6 +25,12 @@
   ansible.builtin.set_fact:
     target_home: "{{ target_home_result.stdout }}"
     target_group: "{{ target_group_result.stdout }}"
+    dotfiles_root: "{{ playbook_dir | dirname }}"
+    xdg_config_home: "{{ target_home_result.stdout }}/.config"
+    platform_task_file: >-
+      {{ 'Fedora.yml'
+         if ansible_facts['distribution'] == 'Fedora'
+         else ansible_facts['os_family'] ~ '.yml' }}
     homebrew_prefix: >-
       {{ '/opt/homebrew'
          if ansible_facts['os_family'] == 'Darwin' and ansible_facts['architecture'] in ['arm64', 'aarch64']
@@ -46,4 +52,4 @@
     locale_is_set: "{{ 'LANG=en_US.UTF-8' in current_locale.stdout }}"
 
 - name: Include OS-specific setup
-  include_tasks: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "{{ platform_task_file }}"

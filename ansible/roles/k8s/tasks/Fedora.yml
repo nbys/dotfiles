@@ -1,0 +1,52 @@
+---
+- name: Install Fedora dependencies for Kubernetes tools
+  ansible.builtin.dnf:
+    name:
+      - curl
+      - gzip
+      - tar
+    state: present
+
+- name: Download kubectl for Fedora
+  ansible.builtin.get_url:
+    url: https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl
+    dest: /tmp/kubectl
+    mode: '0755'
+  when: kubectl_needs_update
+
+- name: Download the kubectl checksum
+  ansible.builtin.get_url:
+    url: https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ kubectl_arch }}/kubectl.sha256
+    dest: /tmp/kubectl.sha256
+    mode: '0644'
+  when: kubectl_needs_update
+
+- name: Verify the kubectl checksum
+  ansible.builtin.shell: |
+    set -o pipefail
+    echo "$(cat /tmp/kubectl.sha256)  /tmp/kubectl" | sha256sum --check
+  args:
+    executable: /bin/bash
+  changed_when: false
+  when: kubectl_needs_update
+
+- name: Install the verified kubectl binary
+  ansible.builtin.copy:
+    src: /tmp/kubectl
+    dest: /usr/local/bin/kubectl
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0755'
+  when: kubectl_needs_update
+
+- name: Download the Helm installer
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: '0755'
+
+- name: Install Helm on Fedora
+  ansible.builtin.command: /tmp/get_helm.sh
+  args:
+    creates: /usr/local/bin/helm

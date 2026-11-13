@@ -1,0 +1,30 @@
+---
+- name: Install Fedora repository management support
+  ansible.builtin.dnf:
+    name: dnf-plugins-core
+    state: present
+
+- name: Configure the official Docker CE Fedora repository
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/fedora/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Docker Engine and CLI plugins on Fedora
+  ansible.builtin.dnf:
+    name:
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-ce
+      - docker-ce-cli
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+
+- name: Allow the target user to access Docker
+  ansible.builtin.user:
+    name: "{{ target_user.stdout }}"
+    groups: docker
+    append: true

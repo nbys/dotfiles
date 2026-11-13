@@ -1,0 +1,20 @@
+---
+- name: Install Fedora repository management support
+  ansible.builtin.dnf:
+    name: dnf-plugins-core
+    state: present
+
+- name: Configure the official HashiCorp Fedora repository
+  ansible.builtin.get_url:
+    url: https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+    dest: /etc/yum.repos.d/hashicorp.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install or update Terraform on Fedora
+  ansible.builtin.dnf:
+    name: terraform
+    state: latest
+    update_cache: true
+  when: terraform_needs_update

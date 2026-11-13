@@ -18,7 +18,7 @@
          )) }}
 
 - name: Include OS-specific Node.js installation
-  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+  ansible.builtin.include_tasks: "{{ platform_task_file }}"
 
 - name: Verify the requested Node.js version
   become: false

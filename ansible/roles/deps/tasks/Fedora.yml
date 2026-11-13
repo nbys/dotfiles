@@ -1,0 +1,41 @@
+---
+- name: Update all Fedora packages
+  ansible.builtin.dnf:
+    name: '*'
+    state: latest
+    update_cache: true
+
+- name: Install the Fedora Development Tools group
+  ansible.builtin.dnf:
+    name: "@Development Tools"
+    state: present
+
+- name: Install Fedora development dependencies
+  ansible.builtin.dnf:
+    name:
+      - bzip2
+      - bzip2-devel
+      - ca-certificates
+      - cmake
+      - curl
+      - findutils
+      - gcc
+      - gcc-c++
+      - git
+      - libffi-devel
+      - make
+      - openssl
+      - openssl-devel
+      - patch
+      - pkgconf-pkg-config
+      - readline-devel
+      - sqlite
+      - sqlite-devel
+      - tar
+      - unzip
+      - wget
+      - xz
+      - xz-devel
+      - zlib-devel
+    state: present
+    allowerasing: true

@@ -1,0 +1,17 @@
+---
+- name: Download the NodeSource repository installer
+  ansible.builtin.get_url:
+    url: https://rpm.nodesource.com/setup_{{ nodejs_version }}.x
+    dest: /tmp/nodesource-setup.sh
+    mode: '0755'
+  when: node_needs_update
+
+- name: Configure NodeSource for Fedora
+  ansible.builtin.command: /tmp/nodesource-setup.sh
+  when: node_needs_update
+
+- name: Install or update Node.js on Fedora
+  ansible.builtin.dnf:
+    name: nodejs
+    state: latest
+  when: node_needs_update

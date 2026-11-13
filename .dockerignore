@@ -1,1 +1,13 @@
+.git
+.DS_Store
+cagent
+gcloud
+github-copilot
+homebrew
+iterm2
 nvm
+nvim.log
+opencode
+zsh/.zcompdump*
+zsh/.zsh_history
+zsh/*.zwc

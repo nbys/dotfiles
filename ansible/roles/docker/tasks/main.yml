@@ -1,6 +1,6 @@
 ---
 - name: Install Docker
-  include_tasks: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_tasks: "{{ platform_task_file }}"
 
 - name: Start and enable Docker service
   systemd:

@@ -9,6 +9,9 @@
         - setup
     - role: deps
       tags: deps
+    - role: workstation
+      tags: workstation
+      when: ansible_facts['distribution'] == 'Fedora'
     - role: node
       tags: node
     - role: rust
@@ -21,6 +24,11 @@
     #   tags: fish
     - role: zsh
       tags: zsh
+    - role: dotfiles
+      tags:
+        - dotfiles
+        - zsh
+      when: ansible_facts['distribution'] == 'Fedora'
     - role: python
       tags: python
     - role: go

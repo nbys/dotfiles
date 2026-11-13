@@ -14,6 +14,7 @@ path=(${path:#/usr/local/opt})
 # Homebrew lives in different prefixes on Apple Silicon, Intel macOS, and
 # Linux. Only add its paths when it is actually installed on this OS.
 typeset -a _homebrew_paths
+_homebrew_prefix=
 case "$OSTYPE" in
   darwin*)
     if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -25,6 +26,8 @@ case "$OSTYPE" in
   linux*)
     if [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
       _homebrew_prefix=/home/linuxbrew/.linuxbrew
+    elif [[ -x "$HOME/.linuxbrew/bin/brew" ]]; then
+      _homebrew_prefix="$HOME/.linuxbrew"
     fi
     ;;
 esac

@@ -1,0 +1,20 @@
+FROM fedora:latest
+
+RUN dnf install -y \
+        ansible-core \
+        git \
+        sudo && \
+    dnf clean all
+
+RUN useradd -m -s /bin/bash myuser && \
+    echo 'myuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+ENV HOME=/home/myuser
+
+COPY . $HOME/dotfiles
+RUN chown -R myuser:myuser $HOME/dotfiles
+
+USER myuser
+WORKDIR $HOME/dotfiles/ansible
+
+CMD ["/bin/bash"]

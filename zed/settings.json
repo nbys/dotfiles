@@ -110,7 +110,7 @@
 
   "terminal": {
     "shell": {
-      "program": "fish",
+      "program": "/bin/zsh",
     },
     "font_family": "Iosevka Nerd Font Mono",
     "blinking": "off",

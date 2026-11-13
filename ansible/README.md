@@ -1,8 +1,13 @@
 # Ansible playbook for my tools
 
-This playbook installs my tools on a fresh Ubuntu, Amazon Linux, or macOS
-machine. On macOS it supports both Apple Silicon and Intel and uses Homebrew
-for native packages. Homebrew is installed automatically when it is missing.
+This playbook installs my tools on a fresh Fedora Workstation, Ubuntu, Amazon
+Linux, or macOS machine. Fedora has dedicated `Fedora.yml` task files; Amazon
+Linux continues to use the existing `RedHat.yml` tasks. Debian and macOS keep
+their existing platform tasks unchanged.
+
+On Fedora the playbook also installs Ghostty, Zed, and Iosevka Nerd Font, makes
+Zsh the login shell, adds the user to the Docker group, and links the project
+configuration into `~/.config`.
 The Zsh role also installs Oh My Zsh and the plugins used by the checked-in
 configuration. It links `~/.zshenv` when that path is free, but preserves an
 existing regular file rather than overwriting it.
@@ -12,6 +17,26 @@ To install only Zsh and its configuration dependencies, run:
 ```bash
 ansible-playbook playbook.yaml --tags zsh -K
 ```
+
+## Fedora Workstation
+
+On a clean installation:
+
+```bash
+sudo dnf install -y ansible-core git
+mkdir -p ~/Projects
+git clone https://github.com/nbys/dotfiles.git ~/Projects/dotfiles
+cd ~/Projects/dotfiles/ansible
+ansible-playbook playbook.yaml -K
+```
+
+Log out and back in after the first run so the new login shell and Docker group
+membership take effect.
+
+Fedora uses native packages where available. Docker and Terraform use their
+official Fedora repositories. Ghostty uses the community COPR referenced by
+Ghostty's Fedora installation documentation, while Zed uses its official
+per-user installer.
 
 ## macOS
 
@@ -68,6 +93,10 @@ Start a container with the following command:
 # execute from the root of the repository
 docker build -f ansible/tests/Dockerfile.ubuntu -t ansible-ubuntu .
 docker run --rm -it ansible-ubuntu:latest
+
+# Fedora
+docker build -f ansible/tests/Dockerfile.fedora -t ansible-fedora .
+docker run --rm -it ansible-fedora:latest
 
 # amazon linux
 docker build -f ansible/tests/Dockerfile.amazonlinux -t ansible-amazon .

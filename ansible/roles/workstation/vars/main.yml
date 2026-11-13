@@ -1,0 +1,4 @@
+---
+# renovate: datasource=github-releases depName=nerd-fonts packageName=ryanoasis/nerd-fonts
+nerd_fonts_version: "3.5.1"
+nerd_fonts_iosevka_sha256: "3b94ea1dc3955756762f977b7677bca671947dd56bc755a6f8465a8e83b5f257"

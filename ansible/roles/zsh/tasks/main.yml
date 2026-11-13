@@ -7,6 +7,12 @@
     state: present
   when: ansible_facts['os_family'] != "Darwin"
 
+- name: Use Zsh as the Fedora login shell
+  ansible.builtin.user:
+    name: "{{ target_user.stdout }}"
+    shell: /bin/zsh
+  when: ansible_facts['distribution'] == 'Fedora'
+
 - name: Install Oh My Zsh
   ansible.builtin.git:
     repo: https://github.com/ohmyzsh/ohmyzsh.git
@@ -40,7 +46,7 @@
 
 - name: Link Zsh environment configuration into the home directory
   ansible.builtin.file:
-    src: "{{ target_home }}/.config/zsh/.zshenv"
+    src: "{{ dotfiles_root }}/zsh/.zshenv"
     dest: "{{ target_home }}/.zshenv"
     state: link
     owner: "{{ target_user.stdout }}"

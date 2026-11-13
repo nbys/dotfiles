@@ -1,0 +1,14 @@
+---
+- name: Install the English locale on Fedora
+  ansible.builtin.dnf:
+    name: glibc-langpack-en
+    state: present
+  when: not locale_is_set
+
+- name: Configure the system locale on Fedora
+  ansible.builtin.lineinfile:
+    path: /etc/locale.conf
+    line: "LANG=en_US.UTF-8"
+    create: true
+    mode: '0644'
+  when: not locale_is_set

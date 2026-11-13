@@ -1,0 +1,47 @@
+---
+- name: Map the Fedora architecture to Neovim's release name
+  ansible.builtin.set_fact:
+    neovim_arch: >-
+      {{ 'linux-x86_64' if ansible_facts['architecture'] == 'x86_64'
+         else 'linux-arm64' if ansible_facts['architecture'] in ['aarch64', 'arm64']
+         else 'unsupported' }}
+  when: neovim_needs_update
+
+- name: Reject an unsupported Neovim architecture
+  ansible.builtin.fail:
+    msg: "Unsupported architecture: {{ ansible_facts['architecture'] }}"
+  when:
+    - neovim_needs_update
+    - neovim_arch == 'unsupported'
+
+- name: Install Fedora dependencies for the Neovim archive
+  ansible.builtin.dnf:
+    name:
+      - gzip
+      - tar
+      - xz
+    state: present
+  when: neovim_needs_update
+
+- name: Download Neovim for Fedora
+  ansible.builtin.get_url:
+    url: >-
+      https://github.com/neovim/neovim/releases/download/{{ neovim_version }}/nvim-{{ neovim_arch }}.tar.gz
+    dest: "/tmp/nvim-{{ neovim_version }}-{{ neovim_arch }}.tar.gz"
+    mode: '0644'
+  when: neovim_needs_update
+
+- name: Extract Neovim on Fedora
+  ansible.builtin.unarchive:
+    src: "/tmp/nvim-{{ neovim_version }}-{{ neovim_arch }}.tar.gz"
+    dest: /usr/local
+    remote_src: true
+  when: neovim_needs_update
+
+- name: Select the installed Neovim version
+  ansible.builtin.file:
+    src: "/usr/local/nvim-{{ neovim_arch }}/bin/nvim"
+    dest: /usr/local/bin/nvim
+    state: link
+    force: true
+  when: neovim_needs_update

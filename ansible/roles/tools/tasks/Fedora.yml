@@ -1,0 +1,13 @@
+---
+- name: Install common CLI tools from Fedora repositories
+  ansible.builtin.dnf:
+    name:
+      - bat
+      - fd-find
+      - fzf
+      - htop
+      - ripgrep
+      - tmux
+      - tree
+    state: present
+    update_cache: true

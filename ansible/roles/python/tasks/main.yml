@@ -1,6 +1,6 @@
 ---
 - name: Include OS-specific task file
-  ansible.builtin.include_tasks: "{{ ansible_facts['os_family'] }}.yml"
+  ansible.builtin.include_tasks: "{{ platform_task_file }}"
 
 - name: Show where pyenv was cloned
   debug:
