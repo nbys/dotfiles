@@ -1,0 +1,88 @@
+---
+- name: Require a supported Ubuntu release for workstation applications
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['distribution'] == 'Ubuntu'
+      - ansible_facts['distribution_version'] is version('24.04', '>=')
+    fail_msg: >-
+      The workstation role supports Ubuntu 24.04 or newer; detected
+      {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}.
+
+- name: Install Ubuntu workstation support packages
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - fontconfig
+      - gnupg
+      - wget
+      - xz-utils
+    state: present
+    update_cache: true
+
+- name: Install Ghostty from the Ubuntu repository
+  ansible.builtin.apt:
+    name: ghostty
+    state: present
+  when: ansible_facts['distribution_version'] is version('26.04', '>=')
+
+- name: Check whether Ghostty is installed on Ubuntu 24.04
+  ansible.builtin.command: ghostty --version
+  register: ubuntu_ghostty
+  changed_when: false
+  failed_when: false
+  when: ansible_facts['distribution_version'] is version('26.04', '<')
+
+- name: Download the documented Ghostty Ubuntu installer
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh
+    dest: /tmp/ghostty-ubuntu-install.sh
+    mode: '0755'
+  when:
+    - ansible_facts['distribution_version'] is version('26.04', '<')
+    - ubuntu_ghostty.rc != 0
+
+- name: Install Ghostty on Ubuntu 24.04
+  ansible.builtin.command: /tmp/ghostty-ubuntu-install.sh
+  args:
+    chdir: /tmp
+  when:
+    - ansible_facts['distribution_version'] is version('26.04', '<')
+    - ubuntu_ghostty.rc != 0
+
+- name: Download the Microsoft package signing key
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    dest: /tmp/microsoft.asc
+    mode: '0644'
+
+- name: Install the Microsoft package signing key
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --dearmor
+      - --output
+      - /usr/share/keyrings/microsoft.gpg
+      - /tmp/microsoft.asc
+  args:
+    creates: /usr/share/keyrings/microsoft.gpg
+
+- name: Configure the Visual Studio Code Ubuntu repository
+  ansible.builtin.copy:
+    content: |
+      Types: deb
+      URIs: https://packages.microsoft.com/repos/code
+      Suites: stable
+      Components: main
+      Architectures: amd64 arm64 armhf
+      Signed-By: /usr/share/keyrings/microsoft.gpg
+    dest: /etc/apt/sources.list.d/vscode.sources
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Visual Studio Code on Ubuntu
+  ansible.builtin.apt:
+    name: code
+    state: present
+    update_cache: true

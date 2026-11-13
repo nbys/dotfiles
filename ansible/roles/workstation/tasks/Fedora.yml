@@ -1,0 +1,50 @@
+---
+- name: Install Fedora workstation support packages
+  ansible.builtin.dnf:
+    name:
+      - curl
+      - fontconfig
+      - xz
+    state: present
+
+- name: Configure the Ghostty Fedora COPR
+  ansible.builtin.get_url:
+    url: >-
+      https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-{{ ansible_facts['distribution_major_version'] }}/scottames-ghostty-fedora-{{ ansible_facts['distribution_major_version'] }}.repo
+    dest: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:scottames:ghostty.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Ghostty on Fedora
+  ansible.builtin.dnf:
+    name: ghostty
+    state: present
+    update_cache: true
+
+- name: Trust the Microsoft package signing key on Fedora
+  ansible.builtin.rpm_key:
+    key: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
+
+- name: Configure the Visual Studio Code Fedora repository
+  ansible.builtin.copy:
+    content: |
+      [code]
+      name=Visual Studio Code
+      baseurl=https://packages.microsoft.com/yumrepos/vscode
+      enabled=1
+      autorefresh=1
+      type=rpm-md
+      gpgcheck=1
+      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+    dest: /etc/yum.repos.d/vscode.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Visual Studio Code on Fedora
+  ansible.builtin.dnf:
+    name: code
+    state: present
+    update_cache: true

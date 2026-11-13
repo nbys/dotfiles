@@ -11,7 +11,7 @@
       tags: deps
     - role: workstation
       tags: workstation
-      when: ansible_facts['distribution'] == 'Fedora'
+      when: ansible_facts['distribution'] in ['Fedora', 'Ubuntu']
     - role: node
       tags: node
     - role: rust
@@ -28,7 +28,7 @@
       tags:
         - dotfiles
         - zsh
-      when: ansible_facts['distribution'] == 'Fedora'
+      when: ansible_facts['distribution'] in ['Fedora', 'Ubuntu']
     - role: python
       tags: python
     - role: go

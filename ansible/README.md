@@ -5,9 +5,10 @@ Linux, or macOS machine. Fedora has dedicated `Fedora.yml` task files; Amazon
 Linux continues to use the existing `RedHat.yml` tasks. Debian and macOS keep
 their existing platform tasks unchanged.
 
-On Fedora the playbook also installs Ghostty, Zed, and Iosevka Nerd Font, makes
-Zsh the login shell, adds the user to the Docker group, and links the project
-configuration into `~/.config`.
+On Fedora and Ubuntu the playbook also installs Ghostty, Zed, Visual Studio
+Code, and Iosevka Nerd Font, and links the project configuration into
+`~/.config`. Fedora additionally makes Zsh the login shell and adds the user to
+the Docker group.
 The Zsh role also installs Oh My Zsh and the plugins used by the checked-in
 configuration. It links `~/.zshenv` when that path is free, but preserves an
 existing regular file rather than overwriting it.
@@ -24,11 +25,20 @@ On a clean installation:
 
 ```bash
 sudo dnf install -y ansible-core git
-mkdir -p ~/Projects
-git clone https://github.com/nbys/dotfiles.git ~/Projects/dotfiles
-cd ~/Projects/dotfiles/ansible
+mkdir -p ~/.config
+git -C ~/.config init
+git -C ~/.config remote add origin https://github.com/nbys/dotfiles.git
+git -C ~/.config fetch --depth=1 origin master
+git -C ~/.config checkout --track origin/master
+cd ~/.config/ansible
 ansible-playbook playbook.yaml -K
 ```
+
+The repository is checked out directly into `~/.config` because it contains the
+configuration directories for Zsh, Neovim, tmux, Ghostty, Zed, htop, and the
+other managed tools. Initializing Git inside the existing directory also works
+when Fedora has already created `~/.config`; Git will stop rather than overwrite
+an untracked file if a path conflicts with the repository.
 
 Log out and back in after the first run so the new login shell and Docker group
 membership take effect.
@@ -36,7 +46,25 @@ membership take effect.
 Fedora uses native packages where available. Docker and Terraform use their
 official Fedora repositories. Ghostty uses the community COPR referenced by
 Ghostty's Fedora installation documentation, while Zed uses its official
-per-user installer.
+per-user installer. Visual Studio Code uses Microsoft's official repository.
+
+## Ubuntu Workstation
+
+The workstation role supports Ubuntu 24.04 and newer. Install the bootstrap
+packages, check the repository out into `~/.config` using the Git commands from
+the Fedora section, and run the same playbook:
+
+```bash
+sudo apt update
+sudo apt install -y ansible git
+cd ~/.config/ansible
+ansible-playbook playbook.yaml -K
+```
+
+Ubuntu 26.04 and newer install Ghostty from Ubuntu's repository. Ubuntu 24.04
+uses the community `.deb` installer referenced by Ghostty's installation
+documentation. Zed and Visual Studio Code use their official Linux installer
+and Microsoft repository respectively.
 
 ## macOS
 
