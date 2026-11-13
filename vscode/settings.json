@@ -1,0 +1,155 @@
+{
+  "security.workspace.trust.untrustedFiles": "open",
+  "telemetry.telemetryLevel": "off",
+  "window.commandCenter": false,
+  "window.title": "${activeRepositoryName}",
+  "breadcrumbs.enabled": false,
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "files.autoSave": "afterDelay",
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.accessibilitySupport": "off",
+  "editor.fontFamily": "Iosevka Nerd Font Mono",
+  "editor.fontLigatures": true,
+  "editor.fontSize": 14,
+  "editor.fontVariations": false,
+  "editor.inlineSuggest.enabled": true,
+  "editor.minimap.maxColumn": 100,
+  "editor.suggestSelection": "first",
+  "editor.lineNumbers": "relative",
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#1A1A1A",
+    "statusBar.foreground": "#b3abdb",
+    "statusBar.debuggingBackground": "#1A1A1A",
+    "statusBar.debuggingForeground": "#b3abdb",
+    "statusBar.noFolderBackground": "#212121",
+    "editor.selectionBackground": "#29514d",
+    "editor.selectionHighlightBackground": "#3d918a5d",
+    "notebook.focusedCellBackground": "#2caaa85d",
+    "notebook.cellInsertionIndicator": "#bd2121"
+  },
+  "workbench.colorTheme": "Rosé Pine Moon (no italics)",
+  "workbench.editor.labelFormat": "short",
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+  "scm.showHistoryGraph": false,
+  "vim.handleKeys": {
+    "<C-d>": false,
+    "<C-c>": false,
+    "<C-p>": false,
+    "<C-b>": false,
+    "<C-f>": false,
+    "<C-x>": false,
+    "<C-]>": false,
+    "<C-[>": false
+  },
+  "vim.leader": " ",
+  "vim.visualModeKeyBindings": [
+    {
+      "before": ["<leader>", "y"],
+      "after": ["\"", "*", "y"]
+    }
+  ],
+  "vim.normalModeKeyBindings": [
+    {
+      "before": ["<leader>", "y"],
+      "after": ["\"", "*", "y"]
+    }
+  ],
+  "terminal.integrated.inheritEnv": false,
+  "terminal.integrated.fontSize": 14,
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash"
+    },
+    "zsh": {
+      "path": "zsh"
+    },
+    "fish": {
+      "path": "fish"
+    }
+  },
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.linux": "zsh",
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.defaultBranchName": "master",
+  "git.enableSmartCommit": true,
+  "git.openRepositoryInParentFolders": "always",
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.console.fontFamily": "IosevkaTerm Nerd Font Mono",
+  "ruff.nativeServer": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.wordBasedSuggestions": "off"
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.envFile": ".env",
+  "python.languageServer": "Pylance",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": true,
+  "python.analysis.extraPaths": [],
+  "python.autoComplete.extraPaths": [],
+  "ruff.organizeImports": true,
+  "ruff.fixAll": true,
+  "notebook.output.scrolling": false,
+  "notebook.output.fontFamily": "Iosevka Nerd Font Mono",
+  "jupyter.debugJustMyCode": false,
+  "jupyter.interactiveWindow.textEditor.executeSelection": true,
+  "jupyter.askForKernelRestart": false,
+  "jupyter.notebookFileRoot": "${workspaceFolder}",
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "left"
+  },
+  "notebook.lineNumbers": "on",
+  "notebook.formatOnCellExecution": true,
+  "notebook.formatOnSave.enabled": true,
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true
+  },
+  "go.inferGopath": true,
+  "go.installDependenciesWhenBuilding": false,
+  "go.lintOnSave": "workspace",
+  "go.lintTool": "golangci-lint",
+  "go.testEnvVars": {},
+  "go.testFlags": ["-v", "-count=1"],
+  "go.testTimeout": "60s",
+  "go.toolsManagement.autoUpdate": true,
+  "go.useLanguageServer": true,
+  "remote.autoForwardPortsSource": "hybrid",
+  "dev.containers.defaultExtensions": ["GitHub.copilot"],
+  "github.copilot.enable": {
+    "*": false,
+    "plaintext": true,
+    "markdown": false,
+    "scminput": false,
+    "yaml": true,
+    "python": false,
+    "notebook": false
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "cmake.showOptionsMovedNotification": false,
+  "lldb.suppressUpdateNotifications": true,
+  "yaml.disableSchemaDetection": [
+    "**/docker-compose.yml",
+    "**/docker-compose.yaml",
+    "**/docker-compose.*.yml",
+    "**/docker-compose.*.yaml",
+    "**/compose.yml",
+    "**/compose.yaml",
+    "**/compose.*.yml",
+    "**/compose.*.yaml"
+  ],
+  "docker.extension.enableComposeLanguageServer": false
+}

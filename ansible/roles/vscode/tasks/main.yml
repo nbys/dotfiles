@@ -1,0 +1,69 @@
+---
+- name: Set the VS Code user configuration directory
+  ansible.builtin.set_fact:
+    vscode_user_config_dir: >-
+      {{ target_home ~ '/Library/Application Support/Code/User'
+         if ansible_facts['os_family'] == 'Darwin'
+         else xdg_config_home ~ '/Code/User' }}
+
+- name: Load public VS Code settings
+  ansible.builtin.include_vars:
+    file: "{{ dotfiles_root }}/vscode/settings.json"
+    name: vscode_public_settings
+
+- name: Check for private VS Code settings
+  ansible.builtin.stat:
+    path: "{{ dotfiles_root }}/vscode/settings.local.json"
+  register: vscode_local_settings_file
+  become: false
+
+- name: Load private VS Code settings
+  ansible.builtin.include_vars:
+    file: "{{ dotfiles_root }}/vscode/settings.local.json"
+    name: vscode_local_settings
+  when: vscode_local_settings_file.stat.exists
+  no_log: true
+
+- name: Merge public and private VS Code settings
+  ansible.builtin.set_fact:
+    vscode_merged_settings: >-
+      {{ vscode_public_settings
+         | combine(vscode_local_settings | default({}), recursive=true, list_merge='replace') }}
+  no_log: true
+
+- name: Ensure the VS Code user configuration directory exists
+  ansible.builtin.file:
+    path: "{{ vscode_user_config_dir }}"
+    state: directory
+    owner: "{{ target_user.stdout }}"
+    group: "{{ target_group }}"
+    mode: '0755'
+  become: false
+
+- name: Inspect existing VS Code settings
+  ansible.builtin.stat:
+    path: "{{ vscode_user_config_dir }}/settings.json"
+  register: vscode_existing_settings
+  become: false
+
+- name: Preserve the settings that predate dotfiles management
+  ansible.builtin.copy:
+    src: "{{ vscode_user_config_dir }}/settings.json"
+    dest: "{{ vscode_user_config_dir }}/settings.before-dotfiles.json"
+    remote_src: true
+    force: false
+    owner: "{{ target_user.stdout }}"
+    group: "{{ target_group }}"
+    mode: '0600'
+  when: vscode_existing_settings.stat.exists
+  become: false
+
+- name: Install merged VS Code settings
+  ansible.builtin.copy:
+    content: "{{ vscode_merged_settings | to_nice_json(indent=2) }}\n"
+    dest: "{{ vscode_user_config_dir }}/settings.json"
+    owner: "{{ target_user.stdout }}"
+    group: "{{ target_group }}"
+    mode: '0644'
+  become: false
+  no_log: true

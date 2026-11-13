@@ -1,0 +1,8 @@
+{
+  "github-enterprise.uris": [
+    "https://github.example.com/"
+  ],
+  "remote.SSH.remotePlatform": {
+    "my-workstation": "linux"
+  }
+}

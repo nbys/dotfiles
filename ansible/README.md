@@ -13,6 +13,21 @@ The Zsh role also installs Oh My Zsh and the plugins used by the checked-in
 configuration. It links `~/.zshenv` when that path is free, but preserves an
 existing regular file rather than overwriting it.
 
+The public VS Code preferences live in `vscode/settings.json`. The `vscode`
+role installs them on Fedora, Ubuntu, and macOS. Put company endpoints, remote
+host names, database connections, and other machine-specific values in
+`vscode/settings.local.json`; that file is ignored by Git and recursively
+overrides the public settings. Start from `vscode/settings.local.example.json`.
+Before the role first replaces an existing VS Code settings file, it preserves
+the original as `settings.before-dotfiles.json` in the same VS Code user
+directory.
+
+To apply only the public settings and optional private overrides, run:
+
+```bash
+ansible-playbook playbook.yaml --tags vscode -K
+```
+
 To install only Zsh and its configuration dependencies, run:
 
 ```bash
