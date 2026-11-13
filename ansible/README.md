@@ -58,10 +58,12 @@ an untracked file if a path conflicts with the repository.
 Log out and back in after the first run so the new login shell and Docker group
 membership take effect.
 
-Fedora uses native packages where available. Docker and Terraform use their
-official Fedora repositories. Ghostty uses the community COPR referenced by
-Ghostty's Fedora installation documentation, while Zed uses its official
-per-user installer. Visual Studio Code uses Microsoft's official repository.
+Fedora uses native packages where available. Docker uses its official Fedora
+repository. Terraform uses HashiCorp's version-pinned Linux release archive so
+new Fedora releases do not have to wait for a matching RPM repository. Ghostty
+uses the community COPR referenced by Ghostty's Fedora installation
+documentation, while Zed uses its official per-user installer. Visual Studio
+Code uses Microsoft's official repository.
 
 ## Ubuntu Workstation
 

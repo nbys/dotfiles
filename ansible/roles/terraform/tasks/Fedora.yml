@@ -1,20 +1,50 @@
 ---
-- name: Install Fedora repository management support
+- name: Require a supported Terraform architecture on Fedora
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] in terraform_linux_architectures
+    fail_msg: >-
+      Terraform {{ terraform_version }} is not configured for Fedora
+      architecture {{ ansible_facts['architecture'] }}.
+
+- name: Select the Terraform release architecture
+  ansible.builtin.set_fact:
+    terraform_release_architecture: >-
+      {{ terraform_linux_architectures[ansible_facts['architecture']] }}
+
+- name: Install the Terraform archive dependency on Fedora
   ansible.builtin.dnf:
-    name: dnf-plugins-core
+    name: unzip
     state: present
 
-- name: Configure the official HashiCorp Fedora repository
+- name: Download the requested Terraform release on Fedora
   ansible.builtin.get_url:
-    url: https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
-    dest: /etc/yum.repos.d/hashicorp.repo
+    url: >-
+      https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_{{ terraform_release_architecture }}.zip
+    dest: >-
+      /tmp/terraform_{{ terraform_version }}_linux_{{ terraform_release_architecture }}.zip
+    checksum: >-
+      sha256:https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_SHA256SUMS
+    mode: '0644'
+  when: terraform_needs_update
+
+- name: Ensure the local binary directory exists on Fedora
+  ansible.builtin.file:
+    path: /usr/local/bin
+    state: directory
     owner: root
     group: root
-    mode: '0644'
+    mode: '0755'
 
-- name: Install or update Terraform on Fedora
-  ansible.builtin.dnf:
-    name: terraform
-    state: latest
-    update_cache: true
+- name: Install the requested Terraform release on Fedora
+  ansible.builtin.unarchive:
+    src: >-
+      /tmp/terraform_{{ terraform_version }}_linux_{{ terraform_release_architecture }}.zip
+    dest: /usr/local/bin
+    remote_src: true
+    include:
+      - terraform
+    owner: root
+    group: root
+    mode: '0755'
   when: terraform_needs_update

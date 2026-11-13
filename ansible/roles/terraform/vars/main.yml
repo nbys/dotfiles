@@ -1,3 +1,7 @@
 ---
 # renovate: datasource=github-releases depName=terraform packageName=hashicorp/terraform versioning=semver-coerced extractVersion=^v(?<version>.*)$
 terraform_version: "1.14.9"
+
+terraform_linux_architectures:
+  x86_64: amd64
+  aarch64: arm64
