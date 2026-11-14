@@ -1,64 +1,90 @@
-local config = function()
-  local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+local parsers = {
+  "bash",
+  "css",
+  "dockerfile",
+  "erlang",
+  "gitignore",
+  "html",
+  "javascript",
+  "json",
+  "lua",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "rust",
+  "solidity",
+  "svelte",
+  "toml",
+  "typescript",
+  "vue",
+  "yaml",
+  "cds",
+}
 
-  parser_config.cds = {
+local highlighted_filetypes = {
+  "cds",
+  "css",
+  "dockerfile",
+  "erlang",
+  "gitignore",
+  "html",
+  "javascript",
+  "json",
+  "lua",
+  "markdown",
+  "python",
+  "rust",
+  "sh",
+  "solidity",
+  "svelte",
+  "toml",
+  "typescript",
+  "typescriptreact",
+  "vue",
+  "yaml",
+}
+
+local function register_cds_parser()
+  require("nvim-treesitter.parsers").cds = {
     install_info = {
-      url = "https://github.com/cap-js-community/tree-sitter-cds.git",
+      url = "https://github.com/SAP-archive/tree-sitter-cds.git",
       branch = "main",
       files = { "src/parser.c", "src/scanner.c" },
+      queries = "nvim",
     },
-    filetype = "cds",
   }
-
-  require("nvim-treesitter.configs").setup({
-    indent = {
-      enable = true,
-    },
-    autotag = {
-      enable = true,
-    },
-    ensure_installed = {
-      "rust",
-      "markdown",
-      "json",
-      "javascript",
-      "typescript",
-      "yaml",
-      "html",
-      "css",
-      "bash",
-      "lua",
-      "dockerfile",
-      "solidity",
-      "gitignore",
-      "python",
-      "vue",
-      "svelte",
-      "toml",
-      "cds",
-      "erlang",
-    },
-    auto_install = true,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = true,
-    },
-    incremental_selection = {
-      enable = true,
-      keymaps = {
-        init_selection = "<C-s>",
-        node_incremental = "<C-s>",
-        scope_incremental = false,
-        node_decremental = "<BS>",
-      },
-    },
-  })
 end
 
 return {
   "nvim-treesitter/nvim-treesitter",
-  branch = "master",
-  build = ":TSUpdate",
+  branch = "main",
   lazy = false,
-  config = config,
+  build = ":TSUpdate",
+  init = function()
+    local group = vim.api.nvim_create_augroup("CustomTreeSitterParsers", { clear = true })
+
+    vim.api.nvim_create_autocmd("User", {
+      group = group,
+      pattern = "TSUpdate",
+      callback = register_cds_parser,
+    })
+  end,
+  config = function()
+    local treesitter = require("nvim-treesitter")
+
+    register_cds_parser()
+    vim.treesitter.language.register("cds", "cds")
+
+    treesitter.setup({})
+    treesitter.install(parsers)
+
+    local group = vim.api.nvim_create_augroup("TreeSitterHighlighting", { clear = true })
+    vim.api.nvim_create_autocmd("FileType", {
+      group = group,
+      pattern = highlighted_filetypes,
+      callback = function(args)
+        pcall(vim.treesitter.start, args.buf)
+      end,
+    })
+  end,
 }

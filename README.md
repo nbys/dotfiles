@@ -17,14 +17,10 @@ starting point.
 
 ## Neovim
 
-### Installation of CDS tree-sitter parser
+### CDS Tree-sitter parser
 
-```bash
-git clone https://github.com/cap-js-community/tree-sitter-cds.git
-mkdir -p ~/.local/share/nvim/lazy/nvim-treesitter/queries/cds/
-cp tree-sitter-cds/queries/* ~/.local/share/nvim/lazy/nvim-treesitter/queries/cds/
-rm -rf tree-sitter-cds
-```
+The Neovim configuration registers and installs the CDS parser and its queries
+automatically through `nvim-treesitter`.
 
 ### Lua
 
