@@ -55,11 +55,33 @@ local function register_cds_parser()
   }
 end
 
+local function update_parsers_after_plugin_update()
+  local treesitter_modules = {}
+
+  for name in pairs(package.loaded) do
+    if name == "nvim-treesitter" or name:match("^nvim%-treesitter%.") then
+      table.insert(treesitter_modules, name)
+    end
+  end
+
+  for _, name in ipairs(treesitter_modules) do
+    package.loaded[name] = nil
+  end
+
+  local treesitter = require("nvim-treesitter")
+
+  if type(treesitter.update) == "function" then
+    treesitter.update(nil, { summary = true }):wait(300000)
+  else
+    vim.cmd("TSUpdate")
+  end
+end
+
 return {
   "nvim-treesitter/nvim-treesitter",
   branch = "main",
   lazy = false,
-  build = ":TSUpdate",
+  build = update_parsers_after_plugin_update,
   init = function()
     local group = vim.api.nvim_create_augroup("CustomTreeSitterParsers", { clear = true })
 
