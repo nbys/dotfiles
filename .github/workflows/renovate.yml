@@ -25,17 +25,15 @@ jobs:
         uses: renovatebot/github-action@v46.3.12
         with:
           additional-env-list: |
-            LOG_FILE
-            LOG_FILE_FORMAT
-            LOG_FILE_LEVEL
+            RENOVATE_REPORT_PATH
+            RENOVATE_REPORT_TYPE
           renovate-version: 44.223.1
           token: ${{ secrets.RENOVATE_TOKEN || github.token }}
         env:
           LOG_LEVEL: info
-          LOG_FILE: /tmp/renovate-log.ndjson
-          LOG_FILE_FORMAT: json
-          LOG_FILE_LEVEL: debug
           RENOVATE_PLATFORM: github
+          RENOVATE_REPORT_PATH: /tmp/renovate-report.json
+          RENOVATE_REPORT_TYPE: file
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_ONBOARDING: "false"
 
@@ -49,8 +47,8 @@ jobs:
             echo "| Dependency | Current | Available update | Result | File |"
             echo "| --- | --- | --- | --- | --- |"
 
-            if [[ ! -s /tmp/renovate-log.ndjson ]]; then
-              echo "| — | — | — | Renovate did not produce a debug report | — |"
+            if [[ ! -s /tmp/renovate-report.json ]]; then
+              echo "| — | — | — | Renovate did not produce a report | — |"
             else
               rows="$(
                 jq -r '
@@ -59,8 +57,7 @@ jobs:
                     | gsub("\\|"; "\\\\|")
                     | gsub("[\\r\\n]"; " ");
 
-                  select(.msg == "packageFiles with updates")
-                  | .config
+                  .repositories[]?.packageFiles
                   | to_entries[]
                   | .value[]
                   | .packageFile as $packageFile
@@ -92,7 +89,7 @@ jobs:
                     + " | \($available | md)"
                     + " | \($result | md)"
                     + " | \($packageFile | md) |"
-                ' /tmp/renovate-log.ndjson | sort -u
+                ' /tmp/renovate-report.json | sort -u
               )"
 
               if [[ -n "$rows" ]]; then
@@ -103,6 +100,6 @@ jobs:
             fi
 
             echo
-            echo "Generated from Renovate's structured debug output."
+            echo "Generated from Renovate's JSON report."
           } >> "$GITHUB_STEP_SUMMARY"
 
