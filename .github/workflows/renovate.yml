@@ -95,7 +95,26 @@ jobs:
               if [[ -n "$rows" ]]; then
                 echo "$rows"
               else
-                echo "| — | — | — | No dependencies were extracted | — |"
+                echo "| — | — | — | No dependencies were extracted; see problems below | — |"
+              fi
+
+              problems="$(
+                jq -r '
+                  [
+                    .problems[]?,
+                    .repositories[]?.problems[]?
+                  ]
+                  | unique_by(.msg)
+                  | .[]
+                  | "- " + (.msg // "Unknown Renovate problem")
+                ' /tmp/renovate-report.json
+              )"
+
+              if [[ -n "$problems" ]]; then
+                echo
+                echo "### Renovate problems"
+                echo
+                echo "$problems"
               fi
             fi
 

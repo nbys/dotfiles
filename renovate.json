@@ -6,9 +6,7 @@
   "enabledManagers": [
     "custom.regex"
   ],
-  "dependencyDashboard": {
-    "enabled": true
-  },
+  "dependencyDashboard": true,
   "semanticCommits": "enabled",
   "customManagers": [
     {
