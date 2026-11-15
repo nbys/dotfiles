@@ -6,7 +6,9 @@
   "enabledManagers": [
     "custom.regex"
   ],
-  "dependencyDashboard": false,
+  "dependencyDashboard": {
+    "enabled": true
+  },
   "semanticCommits": "enabled",
   "customManagers": [
     {
@@ -29,6 +31,23 @@
       "groupName": "pinned tool versions",
       "groupSlug": "pinned-tool-versions",
       "separateMajorMinor": false
+    },
+    {
+      "description": "Report Python release-line upgrades for manual approval",
+      "matchDatasources": [
+        "python-version"
+      ],
+      "matchPackageNames": [
+        "python"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "major"
+      ],
+      "dependencyDashboardApproval": true,
+      "dependencyDashboardCategory": "Python release-line upgrades",
+      "groupName": "Python release-line upgrades",
+      "groupSlug": "python-release-line-upgrades"
     }
   ]
 }
