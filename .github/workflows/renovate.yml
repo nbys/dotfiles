@@ -44,25 +44,52 @@ jobs:
           {
             echo "## Renovate dependency overview"
             echo
-            echo "| Dependency | Current | Available update | Result | File |"
-            echo "| --- | --- | --- | --- | --- |"
+            echo "| Dependency | Current | Available update | Result | Update policy | File |"
+            echo "| --- | --- | --- | --- | --- | --- |"
 
             if [[ ! -s /tmp/renovate-report.json ]]; then
-              echo "| — | — | — | Renovate did not produce a report | — |"
+              echo "| — | — | — | Renovate did not produce a report | — | — |"
             else
               rows="$(
-                jq -r '
+                jq -r --slurpfile renovate_config renovate.json '
                   def md:
                     tostring
                     | gsub("\\|"; "\\\\|")
                     | gsub("[\\r\\n]"; " ");
+
+                  def approval_types($dep; $datasource):
+                    [
+                      $renovate_config[0].packageRules[]?
+                      | select(.dependencyDashboardApproval? == true)
+                      | select(
+                          ((.matchPackageNames? // []) | length) == 0
+                          or ((.matchPackageNames // []) | index($dep)) != null
+                        )
+                      | select(
+                          ((.matchDatasources? // []) | length) == 0
+                          or ((.matchDatasources // []) | index($datasource)) != null
+                        )
+                      | .matchUpdateTypes[]?
+                    ]
+                    | unique;
+
+                  def release_line($version):
+                    try (
+                      $version
+                      | capture("^(?<prefix>v?)(?<major>[0-9]+)\\.(?<minor>[0-9]+)")
+                      | "\(.prefix)\(.major).\(.minor).x"
+                    ) catch $version;
 
                   .repositories[]?.packageFiles
                   | to_entries[]
                   | .value[]
                   | .packageFile as $packageFile
                   | .deps[]
+                  | (.depName // .packageName // "unknown") as $dep
+                  | (.datasource // "") as $datasource
+                  | (.currentValue // .currentVersion // "unknown") as $current
                   | (.updates // []) as $updates
+                  | approval_types($dep; $datasource) as $approvalTypes
                   | (
                       if ($updates | length) == 0 then
                         "—"
@@ -77,17 +104,24 @@ jobs:
                         "Skipped: " + .skipReason
                       elif ($updates | length) == 0 then
                         "Up to date"
-                      elif any($updates[]; .dependencyDashboardApproval? == true) then
-                        ([$updates[] | (.updateType // "update")] | unique | join(", "))
-                        + " — awaiting dashboard approval"
                       else
                         [$updates[] | (.updateType // "update")] | unique | join(", ")
                       end
                     ) as $result
-                  | "| \((.depName // .packageName // "unknown") | md)"
-                    + " | \((.currentValue // .currentVersion // "unknown") | md)"
+                  | (
+                      if ($approvalTypes | length) == 0 then
+                        "—"
+                      else
+                        "Held on \(release_line($current)); "
+                        + ($approvalTypes | join("/"))
+                        + " updates require dashboard approval"
+                      end
+                    ) as $policy
+                  | "| \($dep | md)"
+                    + " | \($current | md)"
                     + " | \($available | md)"
                     + " | \($result | md)"
+                    + " | \($policy | md)"
                     + " | \($packageFile | md) |"
                 ' /tmp/renovate-report.json | sort -u
               )"
@@ -95,7 +129,7 @@ jobs:
               if [[ -n "$rows" ]]; then
                 echo "$rows"
               else
-                echo "| — | — | — | No dependencies were extracted; see problems below | — |"
+                echo "| — | — | — | No dependencies were extracted; see problems below | — | — |"
               fi
 
               problems="$(
