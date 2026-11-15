@@ -24,10 +24,85 @@ jobs:
       - name: Run Renovate
         uses: renovatebot/github-action@v46.3.12
         with:
+          additional-env-list: |
+            LOG_FILE
+            LOG_FILE_FORMAT
+            LOG_FILE_LEVEL
           renovate-version: 44.223.1
           token: ${{ secrets.RENOVATE_TOKEN || github.token }}
         env:
+          LOG_LEVEL: info
+          LOG_FILE: /tmp/renovate-log.ndjson
+          LOG_FILE_FORMAT: json
+          LOG_FILE_LEVEL: debug
           RENOVATE_PLATFORM: github
           RENOVATE_REPOSITORIES: ${{ github.repository }}
           RENOVATE_ONBOARDING: "false"
+
+      - name: Publish dependency overview
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Renovate dependency overview"
+            echo
+            echo "| Dependency | Current | Available update | Result | File |"
+            echo "| --- | --- | --- | --- | --- |"
+
+            if [[ ! -s /tmp/renovate-log.ndjson ]]; then
+              echo "| — | — | — | Renovate did not produce a debug report | — |"
+            else
+              rows="$(
+                jq -r '
+                  def md:
+                    tostring
+                    | gsub("\\|"; "\\\\|")
+                    | gsub("[\\r\\n]"; " ");
+
+                  select(.msg == "packageFiles with updates")
+                  | .config
+                  | to_entries[]
+                  | .value[]
+                  | .packageFile as $packageFile
+                  | .deps[]
+                  | (.updates // []) as $updates
+                  | (
+                      if ($updates | length) == 0 then
+                        "—"
+                      else
+                        [$updates[] | (.newValue // .newVersion // "unknown")]
+                        | unique
+                        | join("<br>")
+                      end
+                    ) as $available
+                  | (
+                      if .skipReason? then
+                        "Skipped: " + .skipReason
+                      elif ($updates | length) == 0 then
+                        "Up to date"
+                      elif any($updates[]; .dependencyDashboardApproval? == true) then
+                        ([$updates[] | (.updateType // "update")] | unique | join(", "))
+                        + " — awaiting dashboard approval"
+                      else
+                        [$updates[] | (.updateType // "update")] | unique | join(", ")
+                      end
+                    ) as $result
+                  | "| \((.depName // .packageName // "unknown") | md)"
+                    + " | \((.currentValue // .currentVersion // "unknown") | md)"
+                    + " | \($available | md)"
+                    + " | \($result | md)"
+                    + " | \($packageFile | md) |"
+                ' /tmp/renovate-log.ndjson | sort -u
+              )"
+
+              if [[ -n "$rows" ]]; then
+                echo "$rows"
+              else
+                echo "| — | — | — | No dependencies were extracted | — |"
+              fi
+            fi
+
+            echo
+            echo "Generated from Renovate's structured debug output."
+          } >> "$GITHUB_STEP_SUMMARY"
 
