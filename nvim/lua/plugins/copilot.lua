@@ -6,7 +6,7 @@ return {
 		vim.g.copilot_no_tab_map = true
 	end,
 	config = function()
-		vim.keymap.set("i", "<Tab><Tab>", 'copilot#Accept("")', {
+		vim.keymap.set("i", "<C-l>", 'copilot#Accept("")', {
 			expr = true,
 			replace_keycodes = false,
 			silent = true,
